@@ -18,10 +18,10 @@ export const JobListingTemplate: React.FC<JobListingTemplateProps> = ({
   return (
     <div className={cn("min-h-screen flex flex-col", className)} {...rest}>
       <Header activeLink="Jobs" />
-      <main className="flex-1 max-w-[1280px] mx-auto w-full px-8 py-8">
-        <div className="grid grid-cols-[280px_1fr] gap-8">
+      <main className="flex-1 max-w-page mx-auto w-full px-8 py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-8">
           <FilterPanel />
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5">
             {jobs.map((job) => (
               <JobCard key={job.id} job={job} />
             ))}

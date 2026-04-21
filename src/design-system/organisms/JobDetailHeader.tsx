@@ -36,7 +36,7 @@ export const JobDetailHeader: React.FC<JobDetailHeaderProps> = ({
   return (
     <div
       className={cn(
-        "bg-[var(--card)] border border-[var(--border)] rounded-2xl p-6 flex flex-col gap-4",
+        "bg-card border border-border rounded-2xl p-6 flex flex-col gap-4",
         className
       )}
       {...rest}
@@ -53,7 +53,7 @@ export const JobDetailHeader: React.FC<JobDetailHeaderProps> = ({
             <Heading as="h2" size="xl" weight="extrabold">
               {title}
             </Heading>
-            <p className="text-[0.875rem] text-[var(--fg-muted)] font-semibold mt-0.5">
+            <p className="text-sm text-fg-muted font-semibold mt-0.5">
               {companyName}
             </p>
           </div>

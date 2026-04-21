@@ -3,22 +3,22 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const chipVariants = cva(
-  "inline-flex items-center gap-[5px] px-2.5 py-1 rounded-full text-[0.6875rem] font-extrabold uppercase tracking-[0.08em]",
+  "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-2xs font-extrabold uppercase tracking-wide",
   {
     variants: {
       variant: {
         accent:
-          "bg-[hsl(32_95%_60%/0.1)] text-[var(--accent)] border border-[var(--accent)]",
+          "bg-accent/10 text-accent border border-accent",
         green:
-          "bg-[hsl(155_100%_42%/0.12)] text-[var(--primary)]",
+          "bg-primary/12 text-primary",
         muted:
-          "bg-[var(--surface)] text-[var(--fg-muted)] border border-[var(--border)]",
-        red: "bg-[hsl(0_84%_65%/0.12)] text-[var(--aj-danger)]",
-        blue: "bg-[hsl(217_91%_60%/0.12)] text-[hsl(217_91%_60%)]",
+          "bg-surface text-fg-muted border border-border",
+        red: "bg-danger/12 text-danger",
+        blue: "bg-info/12 text-info",
         yellow:
-          "bg-[hsl(38_92%_60%/0.14)] text-[hsl(35_70%_40%)]",
+          "bg-warning/14 text-amber-700",
         pill:
-          "px-3 py-[5px] font-bold rounded-full",
+          "px-3 py-1.5 font-bold rounded-full",
       },
     },
     defaultVariants: {

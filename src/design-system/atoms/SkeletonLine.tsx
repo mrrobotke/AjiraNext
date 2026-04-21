@@ -18,7 +18,7 @@ export const SkeletonLine: React.FC<SkeletonLineProps> = ({
   return (
     <div
       className={cn(
-        "animate-pulse bg-[var(--surface)]",
+        "animate-pulse bg-surface",
         rounded === "sm" && "rounded-sm",
         rounded === "md" && "rounded-md",
         rounded === "lg" && "rounded-lg",

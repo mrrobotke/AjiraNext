@@ -34,15 +34,15 @@ export const Header: React.FC<HeaderProps> = ({
     <nav
       className={cn(
         "sticky top-0 z-30 py-5 px-8",
-        "bg-gradient-to-b from-[var(--bg)] to-transparent",
+        "bg-gradient-to-b from-bg to-transparent",
         className
       )}
       {...rest}
     >
       <div
         className={cn(
-          "max-w-[1280px] mx-auto flex items-center gap-[18px]",
-          "bg-[var(--card)] border border-[var(--border)] rounded-full",
+          "max-w-page mx-auto flex items-center gap-4",
+          "bg-card border border-border rounded-full",
           "px-6 py-2.5 shadow-sm"
         )}
       >

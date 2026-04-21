@@ -28,7 +28,7 @@ export const AdminDashboardTemplate: React.FC<
   AdminDashboardTemplateProps
 > = ({ children, activeTab, className, ...rest }) => {
   return (
-    <div className={cn("grid grid-cols-[260px_1fr] min-h-screen", className)} {...rest}>
+    <div className={cn("grid grid-cols-[auto_1fr] min-h-screen", className)} {...rest}>
       <DashboardSidebar
         groups={sidebarGroups.map((g) => ({
           ...g,
@@ -42,10 +42,10 @@ export const AdminDashboardTemplate: React.FC<
         user={{ name: "Grace Wanjiru", role: "Super Admin" }}
       />
       <div className="flex flex-col min-w-0">
-        <div className="flex items-center gap-4 px-7 py-4 border-b border-[var(--border)] bg-[var(--bg)] sticky top-0 z-20">
+        <div className="flex items-center gap-4 px-7 py-4 border-b border-border bg-bg sticky top-0 z-20">
           <SearchInput
             placeholder="Search users, jobs..."
-            className="flex-1 max-w-[520px]"
+            className="flex-1 max-w-xl"
           />
           <div className="flex items-center gap-2 ml-auto">
             <IconButton
@@ -55,7 +55,7 @@ export const AdminDashboardTemplate: React.FC<
               aria-label="Notifications"
               className="relative"
             >
-              <span className="absolute top-[7px] right-[7px] w-2 h-2 rounded-full bg-[var(--accent)] border-2 border-[var(--card)]" />
+              <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-accent border-2 border-card" />
             </IconButton>
           </div>
         </div>

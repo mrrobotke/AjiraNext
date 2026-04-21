@@ -29,21 +29,21 @@ export const Modal: React.FC<ModalProps> = ({
   if (!open) return null;
 
   const sizeClasses = {
-    md: "max-w-[560px]",
-    lg: "max-w-[900px]",
-    xl: "max-w-[1100px]",
+    md: "max-w-xl",
+    lg: "max-w-4xl",
+    xl: "max-w-5xl",
   };
 
   return (
     <div
-      className="fixed inset-0 z-[100] flex items-center justify-center bg-[hsl(216_60%_10%_/0.5)] backdrop-blur-sm animate-[fadeIn_0.2s_ease-out]"
+      className="fixed inset-0 z-[100] flex items-center justify-center bg-bg/50 backdrop-blur-sm animate-fade-in"
       onClick={onClose}
       role="dialog"
       aria-modal="true"
     >
       <div
         className={cn(
-          "bg-[var(--card)] border border-[var(--border)] rounded-3xl shadow-lg w-[calc(100%-48px)] max-h-[90vh] overflow-y-auto p-7 animate-[popIn_0.2s_ease-out]",
+          "bg-card border border-border rounded-3xl shadow-lg w-[calc(100%-48px)] max-h-[90vh] overflow-y-auto p-7 animate-pop-in",
           sizeClasses[size]
         )}
         onClick={(e) => e.stopPropagation()}
@@ -62,7 +62,7 @@ export const Modal: React.FC<ModalProps> = ({
             variant="ghost"
             onClick={onClose}
             aria-label="Close modal"
-            className="bg-[var(--surface)]"
+            className="bg-surface"
           />
         </div>
         {children}

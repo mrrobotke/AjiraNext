@@ -9,20 +9,20 @@ const buttonVariants = cva(
     variants: {
       variant: {
         primary:
-          "bg-[var(--primary)] text-[var(--primary-fg)] hover:brightness-110 hover:shadow-md active:scale-[0.97]",
+          "bg-primary text-primary-fg hover:brightness-110 hover:shadow-md active:scale-97",
         secondary:
-          "bg-[var(--surface)] text-[var(--fg)] border border-[var(--border)] hover:bg-[var(--card)] active:scale-[0.97]",
+          "bg-surface text-fg border border-border hover:bg-card active:scale-97",
         ghost:
-          "bg-transparent text-[var(--fg-muted)] hover:bg-[var(--surface)] hover:text-[var(--fg)] active:scale-[0.97]",
+          "bg-transparent text-fg-muted hover:bg-surface hover:text-fg active:scale-97",
         outline:
-          "bg-transparent text-[var(--fg)] border-2 border-[var(--border)] rounded-xl hover:bg-[var(--primary)] hover:text-[var(--primary-fg)] hover:border-[var(--primary)]",
+          "bg-transparent text-fg border-2 border-border rounded-xl hover:bg-primary hover:text-primary-fg hover:border-primary",
         danger:
-          "bg-[var(--aj-danger)] text-white hover:brightness-110 active:scale-[0.97]",
+          "bg-danger text-white hover:brightness-110 active:scale-97",
       },
       size: {
-        sm: "px-3.5 py-2 text-[0.75rem]",
-        md: "px-5 py-2.5 text-[0.875rem]",
-        lg: "px-7 py-3.5 text-[0.875rem]",
+        sm: "px-3.5 py-2 text-xs",
+        md: "px-5 py-2.5 text-sm",
+        lg: "px-7 py-3.5 text-sm",
       },
     },
     defaultVariants: {

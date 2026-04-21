@@ -21,7 +21,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
   return (
     <div
       className={cn(
-        "bg-[var(--card)] border border-[var(--border)] rounded-2xl p-6 flex flex-col gap-4",
+        "bg-card border border-border rounded-2xl p-6 flex flex-col gap-4",
         className
       )}
       {...rest}
@@ -58,11 +58,11 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
       <div className="flex flex-col gap-2 pt-2">
         <label className="inline-flex items-center gap-2 cursor-pointer">
           <Checkbox />
-          <span className="text-[0.875rem] text-[var(--fg)]">Remote only</span>
+          <span className="text-sm text-fg">Remote only</span>
         </label>
         <label className="inline-flex items-center gap-2 cursor-pointer">
           <Checkbox />
-          <span className="text-[0.875rem] text-[var(--fg)]">
+          <span className="text-sm text-fg">
             Verified employers
           </span>
         </label>

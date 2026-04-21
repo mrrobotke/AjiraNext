@@ -23,11 +23,11 @@ export const JobMeta: React.FC<JobMetaProps> = ({
       {items.map((item, i) => (
         <span key={i} className="inline-flex items-center gap-1.5">
           {item.icon && (
-            <Icon name={item.icon} size={12} className="text-[var(--fg-muted)]" />
+            <Icon name={item.icon} size={12} className="text-fg-muted" />
           )}
           <Caption>{item.text}</Caption>
           {i < items.length - 1 && (
-            <span className="text-[var(--fg-muted)] ml-1">·</span>
+            <span className="text-fg-muted ml-1">·</span>
           )}
         </span>
       ))}

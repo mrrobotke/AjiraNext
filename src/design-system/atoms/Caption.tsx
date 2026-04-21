@@ -12,15 +12,15 @@ export const Caption: React.FC<CaptionProps> = ({
   ...rest
 }) => {
   const variantClasses = {
-    default: "text-[var(--fg-muted)]",
-    error: "text-[var(--aj-danger)]",
-    success: "text-[var(--aj-success)]",
+    default: "text-fg-muted",
+    error: "text-danger",
+    success: "text-success",
   };
 
   return (
     <span
       className={cn(
-        "text-[0.75rem] font-medium leading-[1.5]",
+        "text-xs font-medium leading-normal",
         variantClasses[variant],
         className
       )}

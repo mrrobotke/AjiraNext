@@ -36,8 +36,8 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
       className={cn("relative px-8 pt-10 pb-20", className)}
       {...rest}
     >
-      <div className="max-w-[1280px] mx-auto">
-        <div className="grid grid-cols-[1.15fr_0.85fr] gap-12 items-center">
+      <div className="max-w-page mx-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           <div>
             {eyebrow && (
               <Eyebrow asChip className="mb-6">
@@ -52,7 +52,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
             >
               {title}
             </Heading>
-            <Paragraph size="lg" muted className="mb-8 max-w-[520px]">
+            <Paragraph size="lg" muted className="mb-8 max-w-lg">
               {subtitle}
             </Paragraph>
             <div className="flex flex-wrap gap-3 mb-6">
@@ -64,29 +64,29 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
             {searchPlaceholder && (
               <SearchBar
                 placeholder={searchPlaceholder}
-                className="max-w-[580px] mb-4"
+                className="max-w-xl mb-4"
               />
             )}
             {searchChips && searchChips.length > 0 && (
               <div className="flex flex-wrap items-center gap-2">
-                <span className="text-[0.6875rem] font-extrabold text-[var(--fg-muted)] uppercase tracking-[0.14em] mr-1">
+                <span className="text-2xs font-extrabold text-fg-muted uppercase tracking-wider mr-1">
                   Popular
                 </span>
                 {searchChips.map((chip) => (
-                  <Chip key={chip} variant="muted" className="cursor-pointer hover:bg-[var(--primary)] hover:text-[var(--primary-fg)] hover:border-[var(--primary)] transition-colors">
+                  <Chip key={chip} variant="muted" className="cursor-pointer hover:bg-primary hover:text-primary-fg hover:border-primary transition-colors">
                     {chip}
                   </Chip>
                 ))}
               </div>
             )}
             {stats && stats.length > 0 && (
-              <div className="flex gap-8 mt-10 pt-7 border-t border-[var(--border)] max-w-[520px]">
+              <div className="flex gap-8 mt-10 pt-7 border-t border-border max-w-lg">
                 {stats.map((stat) => (
                   <div key={stat.label}>
-                    <span className="block text-[1.75rem] font-black tracking-[-0.02em] text-[var(--fg)] leading-none">
+                    <span className="block text-3xl font-black tracking-tight text-fg leading-none">
                       {stat.value}
                     </span>
-                    <span className="block text-[0.6875rem] font-bold text-[var(--fg-muted)] uppercase tracking-[0.12em] mt-1.5">
+                    <span className="block text-2xs font-bold text-fg-muted uppercase tracking-wide mt-1.5">
                       {stat.label}
                     </span>
                   </div>
@@ -94,15 +94,15 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
               </div>
             )}
           </div>
-          <div className="relative h-[640px]">
-            <div className="absolute top-0 right-0 w-[380px] aspect-[3/4] rounded-[28px] overflow-hidden shadow-lg z-[2]">
+          <div className="relative h-[40rem] hidden lg:block">
+            <div className="absolute top-0 right-0 w-96 aspect-[3/4] rounded-4xl overflow-hidden shadow-lg z-[2]">
               <img
                 src="/assets/hero_main.jpg"
                 alt="Professional"
                 className="w-full h-full object-cover"
               />
             </div>
-            <div className="absolute bottom-0 left-0 w-[260px] aspect-[4/5] rounded-[20px] overflow-hidden shadow-lg z-[3] border-[6px] border-[var(--bg)]">
+            <div className="absolute bottom-0 left-0 w-64 aspect-[4/5] rounded-2xl overflow-hidden shadow-lg z-[3] border-[6px] border-bg">
               <img
                 src="/assets/hero-woman-laptop.jpg"
                 alt="Working"

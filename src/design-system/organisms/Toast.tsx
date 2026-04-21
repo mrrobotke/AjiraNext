@@ -18,9 +18,9 @@ export const Toast: React.FC<ToastProps> = ({
     <div
       className={cn(
         "fixed bottom-6 left-1/2 -translate-x-1/2 z-[200]",
-        "bg-[var(--fg)] text-[var(--bg)] px-6 py-3 rounded-full",
-        "text-[0.8125rem] font-bold shadow-lg",
-        "animate-[popIn_0.25s_ease-out]",
+        "bg-fg text-bg px-6 py-3 rounded-full",
+        "text-sm font-bold shadow-lg",
+        "animate-pop-in",
         className
       )}
       role="status"

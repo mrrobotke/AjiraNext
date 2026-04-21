@@ -22,7 +22,7 @@ export const UserProfileSnippet: React.FC<UserProfileSnippetProps> = ({
   return (
     <div
       className={cn(
-        "flex items-center gap-2.5 px-2.5 py-2.5 bg-[var(--bg)] border border-[var(--border)] rounded-xl",
+        "flex items-center gap-2.5 px-2.5 py-2.5 bg-bg border border-border rounded-xl",
         className
       )}
       {...rest}
@@ -33,7 +33,7 @@ export const UserProfileSnippet: React.FC<UserProfileSnippetProps> = ({
         size="md"
       />
       <div className="min-w-0">
-        <span className="block text-[0.8125rem] font-bold text-[var(--fg)] truncate">
+        <span className="block text-sm font-bold text-fg truncate">
           {name}
         </span>
         <Caption className="block truncate">{role}</Caption>

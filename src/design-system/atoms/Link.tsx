@@ -19,8 +19,8 @@ export const Link: React.FC<LinkProps> = ({
       className={cn(
         "transition-colors duration-150",
         muted
-          ? "text-[var(--fg-muted)] hover:text-[var(--primary)]"
-          : "text-[var(--fg)] hover:text-[var(--primary)]",
+          ? "text-fg-muted hover:text-primary"
+          : "text-fg hover:text-primary",
         underline && "hover:underline",
         className
       )}

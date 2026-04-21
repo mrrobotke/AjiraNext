@@ -4,10 +4,10 @@ import { StatsRow } from "@/design-system/organisms/StatsRow";
 export default function EmployerPage() {
   return (
     <EmployerDashboardTemplate activeTab="dashboard">
-      <h1 className="text-[1.875rem] font-extrabold text-[var(--fg)] mb-1">
+      <h1 className="text-3xl font-extrabold text-fg mb-1">
         Dashboard
       </h1>
-      <p className="text-[0.875rem] text-[var(--fg-muted)] mb-6">
+      <p className="text-sm text-fg-muted mb-6">
         Manage your jobs and candidates.
       </p>
       <StatsRow

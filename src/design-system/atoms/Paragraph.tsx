@@ -15,16 +15,16 @@ export const Paragraph: React.FC<ParagraphProps> = ({
   ...rest
 }) => {
   const sizeClasses = {
-    sm: "text-[0.875rem] leading-[1.5]",
-    base: "text-[1rem] leading-[1.6]",
-    lg: "text-[1.125rem] leading-[1.6]",
+    sm: "text-sm leading-normal",
+    base: "text-base leading-base",
+    lg: "text-lg leading-base",
   };
 
   return (
     <p
       className={cn(
         sizeClasses[size],
-        muted ? "text-[var(--fg-muted)]" : "text-[var(--fg)]",
+        muted ? "text-fg-muted" : "text-fg",
         className
       )}
       {...rest}

@@ -27,25 +27,25 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({
 }) => {
   return (
     <div
-      className={cn("grid grid-cols-5 gap-3", className)}
+      className={cn("grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-5 gap-3", className)}
       {...rest}
     >
       {columns.map((col) => (
         <div
           key={col.id}
-          className="bg-[var(--surface)] rounded-[14px] p-2.5 min-h-[240px]"
+          className="bg-surface rounded-xl p-2.5 min-h-60"
         >
-          <h4 className="text-[0.6875rem] font-extrabold uppercase tracking-[0.12em] text-[var(--fg-muted)] px-2.5 py-1.5 flex justify-between items-center">
+          <h4 className="text-2xs font-extrabold uppercase tracking-wide text-fg-muted px-2.5 py-1.5 flex justify-between items-center">
             {col.label}
-            <span className="text-[var(--fg-muted)]">{col.items.length}</span>
+            <span className="text-fg-muted">{col.items.length}</span>
           </h4>
           <div className="flex flex-col gap-2 mt-2">
             {col.items.map((item) => (
               <div
                 key={item.id}
-                className="bg-[var(--card)] border border-[var(--border)] rounded-[10px] p-3 text-xs cursor-grab"
+                className="bg-card border border-border rounded-lg p-3 text-xs cursor-grab"
               >
-                <span className="block text-[0.8125rem] font-extrabold text-[var(--fg)]">
+                <span className="block text-sm font-extrabold text-fg">
                   {item.title}
                 </span>
                 <Caption className="block mt-0.5">{item.subtitle}</Caption>

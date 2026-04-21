@@ -17,7 +17,7 @@ export const MarketPill: React.FC<MarketPillProps> = ({
   return (
     <button
       className={cn(
-        "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[var(--surface)] border border-[var(--border)] text-[0.6875rem] font-bold text-[var(--fg)] cursor-pointer hover:border-[var(--primary)] transition-colors",
+        "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-surface border border-border text-2xs font-bold text-fg cursor-pointer hover:border-primary transition-colors",
         className
       )}
       {...rest}

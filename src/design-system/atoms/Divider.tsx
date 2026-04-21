@@ -13,7 +13,7 @@ export const Divider: React.FC<DividerProps> = ({
   return (
     <hr
       className={cn(
-        "border-[var(--border)]",
+        "border-border",
         orientation === "horizontal"
           ? "w-full border-t"
           : "h-full border-l",

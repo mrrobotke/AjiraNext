@@ -14,10 +14,10 @@ export const Eyebrow: React.FC<EyebrowProps> = ({
   return (
     <span
       className={cn(
-        "inline-block text-[0.6875rem] font-extrabold uppercase tracking-[0.18em]",
+        "inline-block text-2xs font-extrabold uppercase tracking-widest",
         asChip
-          ? "bg-[var(--card)] border border-[var(--border)] text-[var(--fg)] px-[14px] py-[6px] rounded-full"
-          : "text-[var(--fg-muted)]",
+          ? "bg-card border border-border text-fg px-3.5 py-1.5 rounded-full"
+          : "text-fg-muted",
         className
       )}
       {...rest}

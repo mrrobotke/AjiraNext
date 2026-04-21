@@ -57,16 +57,16 @@ export const Footer: React.FC<FooterProps> = ({ className, ...rest }) => {
   return (
     <footer
       className={cn(
-        "bg-[var(--bg)] border-t border-[var(--border)] py-14 px-8",
+        "bg-bg border-t border-border py-14 px-8",
         className
       )}
       {...rest}
     >
-      <div className="max-w-[1280px] mx-auto">
-        <div className="grid grid-cols-[2fr_1fr_1fr_1fr_1fr] gap-8 mb-10">
-          <div>
+      <div className="max-w-page mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-6 gap-8 mb-10">
+          <div className="md:col-span-2">
             <Logo />
-            <Paragraph size="sm" className="mt-3 max-w-[260px]">
+            <Paragraph size="sm" className="mt-3 max-w-xs">
               The elite career platform for high-impact professionals across
               Africa.
             </Paragraph>
@@ -76,7 +76,7 @@ export const Footer: React.FC<FooterProps> = ({ className, ...rest }) => {
                   key={s.label}
                   href="#"
                   title={s.label}
-                  className="w-8 h-8 rounded-full bg-[var(--surface)] border border-[var(--border)] inline-flex items-center justify-center text-[var(--fg-muted)] hover:text-[var(--primary)] transition-colors"
+                  className="w-8 h-8 rounded-full bg-surface border border-border inline-flex items-center justify-center text-fg-muted hover:text-primary transition-colors"
                 >
                   <IconButton
                     icon={s.icon}
@@ -91,7 +91,7 @@ export const Footer: React.FC<FooterProps> = ({ className, ...rest }) => {
           </div>
           {columns.map((col) => (
             <div key={col.title}>
-              <h4 className="text-[0.6875rem] font-extrabold uppercase tracking-[0.14em] text-[var(--fg)] mb-3.5">
+              <h4 className="text-2xs font-extrabold uppercase tracking-wider text-fg mb-3.5">
                 {col.title}
               </h4>
               {col.links.map((link) => (
@@ -99,7 +99,7 @@ export const Footer: React.FC<FooterProps> = ({ className, ...rest }) => {
                   key={link.label}
                   href={link.href}
                   muted
-                  className="block text-[0.8125rem] mb-2"
+                  className="block text-sm mb-2"
                 >
                   {link.label}
                 </Link>
@@ -107,7 +107,7 @@ export const Footer: React.FC<FooterProps> = ({ className, ...rest }) => {
             </div>
           ))}
         </div>
-        <div className="flex justify-between pt-6 border-t border-[var(--border)] text-[0.75rem] text-[var(--fg-muted)]">
+        <div className="flex flex-col sm:flex-row justify-between pt-6 border-t border-border text-xs text-fg-muted gap-2">
           <span>© 2026 Ajira Next · Made in Nairobi</span>
           <span>Kenya · Nigeria · South Africa · Ghana · Rwanda</span>
         </div>

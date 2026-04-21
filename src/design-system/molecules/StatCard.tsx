@@ -23,20 +23,20 @@ export const StatCard: React.FC<StatCardProps> = ({
   ...rest
 }) => {
   const trendClasses = {
-    up: "text-[var(--primary)]",
-    down: "text-[var(--aj-danger)]",
-    neutral: "text-[var(--fg-muted)]",
+    up: "text-primary",
+    down: "text-danger",
+    neutral: "text-fg-muted",
   };
 
   return (
     <div
       className={cn(
-        "bg-[var(--card)] border border-[var(--border)] rounded-[14px] p-4",
+        "bg-card border border-border rounded-xl p-4",
         className
       )}
       {...rest}
     >
-      <Caption className="uppercase tracking-[0.12em] font-extrabold text-[0.625rem]">
+      <Caption className="uppercase tracking-wide font-extrabold text-2xs">
         {label}
       </Caption>
       <div className="flex items-center gap-3 mt-1.5 mb-1">
@@ -44,7 +44,7 @@ export const StatCard: React.FC<StatCardProps> = ({
           {value}
         </Heading>
         {icon && (
-          <div className="w-8 h-8 rounded-full bg-[var(--surface)] border border-[var(--border)] flex items-center justify-center text-[var(--fg-muted)]">
+          <div className="w-8 h-8 rounded-full bg-surface border border-border flex items-center justify-center text-fg-muted">
             <Icon name={icon} size={14} />
           </div>
         )}

@@ -14,12 +14,12 @@ export const Logo: React.FC<LogoProps> = ({
     <a
       href={href}
       className={cn(
-        "inline-block text-[1.25rem] font-black tracking-[-0.03em] text-[var(--fg)] whitespace-nowrap flex-shrink-0",
+        "inline-block text-xl font-black tracking-tight text-fg whitespace-nowrap flex-shrink-0",
         className
       )}
       {...rest}
     >
-      Ajira Nex<span className="text-[var(--primary)]">t.</span>
+      Ajira Nex<span className="text-primary">t.</span>
     </a>
   );
 };

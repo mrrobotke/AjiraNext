@@ -12,9 +12,9 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
       <select
         ref={ref}
         className={cn(
-          "w-full bg-[var(--card)] border border-[var(--border)] rounded-xl px-3.5 py-3 text-[0.875rem] text-[var(--fg)] outline-none transition-all duration-150 appearance-none",
-          "focus:border-[var(--primary)] focus:shadow-[0_0_0_3px_hsl(155_100%_42%_/0.18)]",
-          error && "border-[var(--aj-danger)] focus:border-[var(--aj-danger)] focus:shadow-[0_0_0_3px_hsl(0_84%_65%_/0.18)]",
+          "w-full bg-card border border-border rounded-xl px-3.5 py-3 text-sm text-fg outline-none transition-all duration-150 appearance-none",
+          "focus:border-primary focus:shadow-focus",
+          error && "border-danger focus:border-danger focus:shadow-focus-danger",
           className
         )}
         {...rest}

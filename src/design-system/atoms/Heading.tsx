@@ -16,13 +16,13 @@ export const Heading: React.FC<HeadingProps> = ({
   ...rest
 }) => {
   const sizeClasses = {
-    "7xl": "text-[4.5rem] leading-[1.05] tracking-[-0.025em]",
-    "5xl": "text-[3rem] leading-[1.1] tracking-[-0.02em]",
-    "4xl": "text-[2.25rem] leading-[1.15] tracking-[-0.015em]",
-    "3xl": "text-[1.875rem] leading-[1.25] tracking-[-0.01em]",
-    "2xl": "text-[1.5rem] leading-[1.3] tracking-[-0.005em]",
-    xl: "text-[1.25rem] leading-[1.4]",
-    lg: "text-[1.125rem] leading-[1.5]",
+    "7xl": "text-7xl leading-tight tracking-tighter",
+    "5xl": "text-5xl leading-tight tracking-tight",
+    "4xl": "text-4xl leading-snug tracking-tight",
+    "3xl": "text-3xl leading-snug tracking-tight",
+    "2xl": "text-2xl leading-snug",
+    xl: "text-xl leading-snug",
+    lg: "text-lg leading-relaxed",
   };
 
   const weightClasses = {
@@ -34,7 +34,7 @@ export const Heading: React.FC<HeadingProps> = ({
   return (
     <Component
       className={cn(
-        "text-[var(--fg)]",
+        "text-fg",
         sizeClasses[size],
         weightClasses[weight],
         className
