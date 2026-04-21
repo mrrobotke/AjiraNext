@@ -106,6 +106,7 @@ html[data-theme="light"] {
   /* Animations */
   --animate-fade-in: fade-in 0.2s ease-out;
   --animate-pop-in: pop-in 0.2s ease-out;
+  --animate-marquee: marquee 35s linear infinite;
   --animate-spin-slow: spin 40s linear infinite;
   --animate-spin-slower: spin 60s linear infinite reverse;
 }
@@ -119,6 +120,11 @@ html[data-theme="light"] {
 @keyframes pop-in {
   from { opacity: 0; transform: translateY(8px) scale(0.98); }
   to { opacity: 1; transform: none; }
+}
+
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
 }
 
 /* ---------- Base styles ---------- */

@@ -35,6 +35,7 @@ Decomposition of every UI element found in the mockup using Atomic Design method
 - **Spinner** — Loading indicator
 - **SkeletonLine** — Loading placeholder
 - **Divider** — Horizontal rule
+- **ProgressBar** — Progress indicator bar
 
 ## Molecules (Composed of 2+ Atoms)
 
@@ -62,6 +63,9 @@ Decomposition of every UI element found in the mockup using Atomic Design method
 - **ApplicationCard** — Job info + status badge + progress
 - **Modal** — Backdrop + card container + close button + title slot
 - **Toast** — Fixed-position notification pill
+- **Tabs** — Horizontal tab navigation
+- **Table** — Data table with sortable columns
+- **Marquee** — Infinite scrolling text banner
 
 ## Templates (Page-Level Wireframes)
 
