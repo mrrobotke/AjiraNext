@@ -8,12 +8,9 @@ const iconButtonVariants = cva(
   {
     variants: {
       variant: {
-        default:
-          "bg-card border border-border text-fg hover:bg-surface",
-        ghost:
-          "bg-transparent text-fg-muted hover:bg-surface hover:text-fg",
-        primary:
-          "bg-primary text-primary-fg hover:brightness-110",
+        default: "bg-card border border-border text-fg hover:bg-surface",
+        ghost: "bg-transparent text-fg-muted hover:bg-surface hover:text-fg",
+        primary: "bg-primary text-primary-fg hover:brightness-110",
       },
       size: {
         sm: "w-8 h-8",
@@ -25,35 +22,42 @@ const iconButtonVariants = cva(
       variant: "default",
       size: "md",
     },
-  }
+  },
 );
 
-export interface IconButtonProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+export interface IconButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   icon: IconProps["name"];
   iconSize?: number;
   variant?: "default" | "ghost" | "primary";
   size?: "sm" | "md" | "lg";
 }
 
-export const IconButton = React.forwardRef<
-  HTMLButtonElement,
-  IconButtonProps
->(
+export const IconButton = React.forwardRef<HTMLButtonElement, IconButtonProps>(
   (
-    { icon, iconSize = 16, variant = "default", size = "md", className, ...rest },
-    ref
+    {
+      icon,
+      iconSize = 16,
+      variant = "default",
+      size = "md",
+      className,
+      ...rest
+    },
+    ref,
   ) => {
     return (
       <button
         ref={ref}
-        className={cn(iconButtonVariants({ variant, size }), className)}
+        className={cn(
+          iconButtonVariants({ variant, size }),
+          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-bg",
+          className,
+        )}
         {...rest}
       >
         <Icon name={icon} size={iconSize} />
       </button>
     );
-  }
+  },
 );
 
 IconButton.displayName = "IconButton";

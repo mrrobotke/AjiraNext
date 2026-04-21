@@ -1,15 +1,14 @@
 import React from "react";
 import { cn } from "@/lib/utils";
 
-export interface ParagraphProps
-  extends React.HTMLAttributes<HTMLParagraphElement> {
+export interface ParagraphProps extends React.HTMLAttributes<HTMLParagraphElement> {
   size?: "sm" | "base" | "lg";
   muted?: boolean;
 }
 
 export const Paragraph: React.FC<ParagraphProps> = ({
   size = "base",
-  muted = true,
+  muted = false,
   className,
   children,
   ...rest
@@ -25,7 +24,7 @@ export const Paragraph: React.FC<ParagraphProps> = ({
       className={cn(
         sizeClasses[size],
         muted ? "text-fg-muted" : "text-fg",
-        className
+        className,
       )}
       {...rest}
     >

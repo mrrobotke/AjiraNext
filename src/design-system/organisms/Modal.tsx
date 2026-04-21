@@ -36,7 +36,7 @@ export const Modal: React.FC<ModalProps> = ({
 
   return (
     <div
-      className="fixed inset-0 z-[100] flex items-center justify-center bg-bg/50 backdrop-blur-sm animate-fade-in"
+      className="fixed inset-0 z-modal flex items-center justify-center bg-bg/50 backdrop-blur-sm animate-fade-in"
       onClick={onClose}
       role="dialog"
       aria-modal="true"
@@ -44,7 +44,7 @@ export const Modal: React.FC<ModalProps> = ({
       <div
         className={cn(
           "bg-card border border-border rounded-3xl shadow-lg w-[calc(100%-48px)] max-h-[90vh] overflow-y-auto p-7 animate-pop-in",
-          sizeClasses[size]
+          sizeClasses[size],
         )}
         onClick={(e) => e.stopPropagation()}
       >

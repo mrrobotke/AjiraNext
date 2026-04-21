@@ -15,11 +15,14 @@ export default meta;
 type Story = StoryObj<typeof Paragraph>;
 
 export const Default: Story = {
-  args: { children: "This is a standard paragraph with muted color." },
+  args: { children: "This is a standard paragraph with foreground color." },
 };
 export const Large: Story = {
-  args: { size: "lg", children: "This is a large paragraph for hero sections." },
+  args: {
+    size: "lg",
+    children: "This is a large paragraph for hero sections.",
+  },
 };
-export const NotMuted: Story = {
-  args: { muted: false, children: "This paragraph uses the foreground color." },
+export const Muted: Story = {
+  args: { muted: true, children: "This paragraph uses the muted color." },
 };

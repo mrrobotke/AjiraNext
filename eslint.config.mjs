@@ -16,7 +16,13 @@ const eslintConfig = defineConfig([
     "build/**",
     "next-env.d.ts",
   ]),
-  ...storybook.configs["flat/recommended"]
+  ...storybook.configs["flat/recommended"],
+  {
+    files: ["**/*.stories.tsx"],
+    rules: {
+      "storybook/no-renderer-packages": "off",
+    },
+  }
 ]);
 
 export default eslintConfig;

@@ -11,5 +11,7 @@ export default meta;
 type Story = StoryObj<typeof Toggle>;
 
 export const Default: Story = { args: { label: "Enable notifications" } };
-export const Checked: Story = { args: { label: "Dark mode", defaultChecked: true } };
-export const NoLabel: Story = { args: {} };
+export const Checked: Story = {
+  args: { label: "Dark mode", defaultChecked: true },
+};
+export const NoLabel: Story = { args: { "aria-label": "Toggle" } };

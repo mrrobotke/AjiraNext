@@ -25,15 +25,14 @@ export const Avatar: React.FC<AvatarProps> = ({
       className={cn(
         "rounded-full bg-primary text-primary-fg flex items-center justify-center font-black overflow-hidden flex-shrink-0",
         sizeClasses[size],
-        className
+        className,
       )}
-      aria-label={initials ? `Avatar for ${initials}` : "Avatar"}
       {...rest}
     >
       {src ? (
         <img
           src={src}
-          alt=""
+          alt={initials ?? "User avatar"}
           className="w-full h-full object-cover"
         />
       ) : (

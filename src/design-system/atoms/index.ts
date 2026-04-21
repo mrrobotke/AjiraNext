@@ -14,7 +14,6 @@ export { Logo } from "./Logo";
 export { Paragraph } from "./Paragraph";
 export { ProgressBar } from "./ProgressBar";
 export { Radio } from "./Radio";
-export { SearchInput } from "./SearchInput";
 export { Select } from "./Select";
 export { SkeletonLine } from "./SkeletonLine";
 export { Spinner } from "./Spinner";

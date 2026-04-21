@@ -8,7 +8,7 @@ const meta: Meta<typeof Chip> = {
   argTypes: {
     variant: {
       control: "select",
-      options: ["accent", "green", "muted", "red", "blue", "yellow", "pill"],
+      options: ["accent", "green", "muted", "red", "blue", "yellow"],
     },
   },
 };
@@ -16,12 +16,16 @@ export default meta;
 
 type Story = StoryObj<typeof Chip>;
 
-export const Accent: Story = { args: { variant: "accent", children: "Featured" } };
+export const Accent: Story = {
+  args: { variant: "accent", children: "Featured" },
+};
 export const Green: Story = { args: { variant: "green", children: "New" } };
 export const Muted: Story = { args: { variant: "muted", children: "Draft" } };
 export const Red: Story = { args: { variant: "red", children: "Urgent" } };
 export const Blue: Story = { args: { variant: "blue", children: "Info" } };
-export const Yellow: Story = { args: { variant: "yellow", children: "Warning" } };
+export const Yellow: Story = {
+  args: { variant: "yellow", children: "Warning" },
+};
 
 export const All: Story = {
   render: () => (

@@ -9,6 +9,8 @@ const meta: Meta<typeof TextInput> = {
     error: { control: "boolean" },
     disabled: { control: "boolean" },
     placeholder: { control: "text" },
+    leadingIcon: { control: "text" },
+    trailingIcon: { control: "text" },
   },
 };
 export default meta;
@@ -29,4 +31,12 @@ export const Error: Story = {
 
 export const Disabled: Story = {
   args: { disabled: true, defaultValue: "Disabled input" },
+};
+
+export const WithLeadingIcon: Story = {
+  args: { leadingIcon: "Search", placeholder: "Search..." },
+};
+
+export const WithTrailingIcon: Story = {
+  args: { trailingIcon: "X", placeholder: "Clearable..." },
 };

@@ -25,7 +25,10 @@ export const Icon: React.FC<IconProps> = ({
       size={size}
       strokeWidth={strokeWidth}
       className={className}
-      {...(rest as any)}
+      {...(rest as Omit<
+        React.SVGAttributes<SVGSVGElement>,
+        "size" | "strokeWidth" | "className"
+      >)}
     />
   );
 };

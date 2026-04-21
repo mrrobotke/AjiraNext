@@ -2,10 +2,12 @@
 
 import { Suspense } from "react";
 import { AuthPageTemplate } from "@/design-system/templates/AuthPageTemplate";
+import { AuthForm } from "@/design-system/organisms/AuthForm";
+import { AuthSidebar } from "@/design-system/organisms/AuthSidebar";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState, useCallback } from "react";
 
-function AuthForm() {
+function AuthPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const initialMode =
@@ -24,7 +26,7 @@ function AuthForm() {
       params.set("mode", newMode);
       router.replace(`/auth?${params.toString()}`, { scroll: false });
     },
-    [router, searchParams]
+    [router, searchParams],
   );
 
   const handleRoleChange = useCallback(
@@ -34,17 +36,13 @@ function AuthForm() {
       params.set("as", newRole);
       router.replace(`/auth?${params.toString()}`, { scroll: false });
     },
-    [router, searchParams]
+    [router, searchParams],
   );
 
-  const handleSocialSignIn = useCallback(
-    (provider: "google" | "linkedin") => {
-      // eslint-disable-next-line no-console
-      console.log("Social sign-in:", provider);
-      // TODO: Implement OAuth flow
-    },
-    []
-  );
+  const handleSocialSignIn = useCallback((provider: "google" | "linkedin") => {
+    console.log("Social sign-in:", provider);
+    // TODO: Implement OAuth flow
+  }, []);
 
   const handleSubmit = useCallback(
     (data: {
@@ -55,31 +53,33 @@ function AuthForm() {
       otp?: string;
     }) => {
       setLoading(true);
-      // eslint-disable-next-line no-console
+
       console.log("Auth submit:", { mode, ...data });
       // TODO: Implement auth API call
       setTimeout(() => setLoading(false), 1500);
     },
-    [mode]
+    [mode],
   );
 
   return (
-    <AuthPageTemplate
-      mode={mode}
-      onModeChange={handleModeChange}
-      onSocialSignIn={handleSocialSignIn}
-      onSubmit={handleSubmit}
-      role={role}
-      onRoleChange={handleRoleChange}
-      loading={loading}
-    />
+    <AuthPageTemplate sidebar={<AuthSidebar />}>
+      <AuthForm
+        mode={mode}
+        onModeChange={handleModeChange}
+        onSocialSignIn={handleSocialSignIn}
+        onSubmit={handleSubmit}
+        role={role}
+        onRoleChange={handleRoleChange}
+        loading={loading}
+      />
+    </AuthPageTemplate>
   );
 }
 
 export default function AuthPage() {
   return (
     <Suspense fallback={<div className="min-h-screen bg-bg" />}>
-      <AuthForm />
+      <AuthPageContent />
     </Suspense>
   );
 }

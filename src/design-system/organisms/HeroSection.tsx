@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import { cn } from "@/lib/utils";
 import { Heading } from "@/design-system/atoms/Heading";
@@ -10,8 +12,10 @@ import { Icon } from "@/design-system/atoms/Icon";
 /*  Types                                                              */
 /* ------------------------------------------------------------------ */
 
-export interface HeroSectionProps
-  extends Omit<React.HTMLAttributes<HTMLDivElement>, "title"> {
+export interface HeroSectionProps extends Omit<
+  React.HTMLAttributes<HTMLDivElement>,
+  "title"
+> {
   variant?: "A" | "B" | "C";
   eyebrow?: string;
   title: React.ReactNode;
@@ -25,37 +29,37 @@ export interface HeroSectionProps
   marks?: string[];
   media?: React.ReactNode;
   dark?: boolean;
+  matchCard?: {
+    role: string;
+    detail: string;
+    score: number;
+  };
+  pingCard?: {
+    label: string;
+    sublabel: string;
+  };
+  floatCards?: Array<{
+    icon: string;
+    company: string;
+    role: string;
+    fit: string;
+    pos: string;
+    delay: string;
+  }>;
+  heroImages?: { main: string; secondary: string };
 }
 
 /* ------------------------------------------------------------------ */
 /*  Shared bits                                                        */
 /* ------------------------------------------------------------------ */
 
-const UnderlineDecoration: React.FC<{ children: React.ReactNode }> = ({
-  children,
-}) => (
-  <span className="relative inline-block">
-    {children}
-    <span
-      className="absolute left-0 right-0 bottom-[6px] h-2.5 bg-primary/18 -z-10 rounded"
-      aria-hidden
-    />
-  </span>
-);
-
-const ItalicAccent: React.FC<{ children: React.ReactNode }> = ({
-  children,
-}) => (
-  <em className="italic font-normal text-primary font-serif tracking-tight">
-    {children}
-  </em>
-);
-
 const TrustStats: React.FC<{
   stats: Array<{ value: string; label: string }>;
   className?: string;
 }> = ({ stats, className }) => (
-  <div className={cn("flex gap-8 pt-7 border-t border-border max-w-lg", className)}>
+  <div
+    className={cn("flex gap-8 pt-7 border-t border-border max-w-lg", className)}
+  >
     {stats.map((stat) => (
       <div key={stat.label}>
         <span className="block text-3xl font-black tracking-tight text-fg leading-none">
@@ -84,19 +88,29 @@ const HeroA: React.FC<Omit<HeroSectionProps, "variant" | "media">> = ({
   stats,
   topBar,
   marks,
+  matchCard = {
+    role: "Senior Product Strategist",
+    detail: "Andela · Remote · USD 140k",
+    score: 98,
+  },
+  pingCard = { label: "3 new fits today", sublabel: "Based on your profile" },
+  heroImages = {
+    main: "/assets/hero_main.jpg",
+    secondary: "/assets/hero-woman-laptop.jpg",
+  },
 }) => {
   return (
     <section className="relative px-8 pt-10 pb-0">
       <div className="max-w-page mx-auto">
         {/* Top bar */}
         {topBar && (
-          <div className="flex justify-between items-center gap-4 pb-[22px] border-b border-border text-2xs font-extrabold uppercase tracking-widest text-fg-muted">
+          <div className="flex justify-between items-center gap-4 pb-5.5 border-b border-border text-2xs font-extrabold uppercase tracking-widest text-fg-muted">
             <span>{topBar.left}</span>
             <span>{topBar.right}</span>
           </div>
         )}
 
-        <div className="grid grid-cols-1 lg:grid-cols-[1.15fr_0.85fr] gap-12 py-14 lg:py-[56px] lg:pb-[88px] items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-[1.15fr_0.85fr] gap-12 py-14 lg:py-14 lg:pb-22 items-center">
           {/* Left column */}
           <div>
             {eyebrow && (
@@ -107,9 +121,9 @@ const HeroA: React.FC<Omit<HeroSectionProps, "variant" | "media">> = ({
               </span>
             )}
 
-            <h1 className="text-hero-a leading-none tracking-tighter font-bold text-fg mt-7 mb-6">
+            <Heading as="h1" size="hero-a" className="mt-7 mb-6">
               {title}
-            </h1>
+            </Heading>
 
             <Paragraph size="lg" muted className="mb-8 max-w-lg">
               {subtitle}
@@ -119,12 +133,12 @@ const HeroA: React.FC<Omit<HeroSectionProps, "variant" | "media">> = ({
             {searchCells && searchCells.length > 0 && (
               <form
                 onSubmit={(e) => e.preventDefault()}
-                className="bg-card border border-border rounded-[20px] p-2.5 grid grid-cols-[1.2fr_1fr_auto] gap-1.5 shadow-md max-w-[580px]"
+                className="bg-card border border-border rounded-2.5xl p-2.5 grid grid-cols-[1.2fr_1fr_auto] gap-1.5 shadow-md max-w-xl"
               >
                 {searchCells.map((cell) => (
                   <div
                     key={cell.label}
-                    className="flex flex-col gap-0.5 px-3.5 py-2 rounded-[14px] hover:bg-surface transition-colors min-w-0"
+                    className="flex flex-col gap-0.5 px-3.5 py-2 rounded-xl hover:bg-surface transition-colors min-w-0"
                   >
                     <label className="text-2xs font-extrabold uppercase tracking-wide text-fg-muted">
                       {cell.label}
@@ -132,14 +146,14 @@ const HeroA: React.FC<Omit<HeroSectionProps, "variant" | "media">> = ({
                     <input
                       type="text"
                       placeholder={cell.placeholder}
-                      className="bg-transparent border-none outline-none text-fg text-[15px] font-semibold p-0 placeholder:text-fg-muted/60"
+                      className="bg-transparent border-none outline-none text-fg text-sm font-semibold p-0 placeholder:text-fg-muted/60"
                     />
                   </div>
                 ))}
                 <Button
                   type="submit"
                   size="lg"
-                  className="h-full rounded-[14px] px-5"
+                  className="h-full rounded-xl px-5"
                 >
                   Search
                   <Icon name="ArrowUpRight" size={16} />
@@ -149,7 +163,7 @@ const HeroA: React.FC<Omit<HeroSectionProps, "variant" | "media">> = ({
 
             {/* Chips */}
             {searchChips && searchChips.length > 0 && (
-              <div className="flex flex-wrap items-center gap-2 mt-[18px]">
+              <div className="flex flex-wrap items-center gap-2 mt-4.5">
                 <span className="text-2xs font-extrabold text-fg-muted uppercase tracking-wide mr-1">
                   Popular
                 </span>
@@ -183,48 +197,51 @@ const HeroA: React.FC<Omit<HeroSectionProps, "variant" | "media">> = ({
 
           {/* Right column — image collage */}
           <div className="relative h-[640px] hidden lg:block">
-            <div className="absolute top-0 right-0 w-[380px] aspect-[3/4] rounded-[28px] overflow-hidden shadow-lg z-[2]">
+            <div className="absolute top-0 right-0 w-96 aspect-[3/4] rounded-3xl overflow-hidden shadow-lg z-[2]">
               <img
-                src="/assets/hero_main.jpg"
+                src={heroImages.main}
                 alt="Professional"
                 className="w-full h-full object-cover"
               />
             </div>
-            <div className="absolute bottom-0 left-0 w-[260px] aspect-[4/5] rounded-[20px] overflow-hidden shadow-lg z-[3] border-[6px] border-bg">
+            <div className="absolute bottom-0 left-0 w-64 aspect-[4/5] rounded-2.5xl overflow-hidden shadow-lg z-[3] border-6 border-bg">
               <img
-                src="/assets/hero-woman-laptop.jpg"
+                src={heroImages.secondary}
                 alt="Working"
                 className="w-full h-full object-cover"
               />
             </div>
 
             {/* Floating match card */}
-            <div className="absolute top-[22px] left-[-8px] z-[4] bg-card border border-border rounded-2xl shadow-lg p-4 w-[240px]">
+            <div className="absolute top-5.5 -left-2 z-[4] bg-card border border-border rounded-2xl shadow-lg p-4 w-[240px]">
               <div className="flex justify-between items-center mb-2">
                 <b className="text-2xs font-extrabold text-fg-muted uppercase tracking-wide">
                   Match Score
                 </b>
-                <span className="text-[26px] font-black text-primary leading-none tracking-tight">
-                  98
+                <span className="text-2xl font-black text-primary leading-none tracking-tight">
+                  {matchCard.score}
                 </span>
               </div>
               <div className="text-sm font-extrabold text-fg mb-0.5">
-                Senior Product Strategist
+                {matchCard.role}
               </div>
-              <div className="text-xs text-fg-muted">
-                Andela · Remote · USD 140k
-              </div>
+              <div className="text-xs text-fg-muted">{matchCard.detail}</div>
               <div className="h-1.5 bg-surface rounded-full overflow-hidden mt-2.5">
-                <div className="h-full bg-primary w-[98%] rounded-full" />
+                <div
+                  className="h-full bg-primary rounded-full"
+                  style={{ width: `${matchCard.score}%` }}
+                />
               </div>
             </div>
 
             {/* Floating ping card */}
-            <div className="absolute bottom-[90px] right-[-24px] z-[4] bg-card border border-border rounded-2xl shadow-lg px-4 py-3 flex items-center gap-3">
+            <div className="absolute bottom-22 -right-6 z-[4] bg-card border border-border rounded-2xl shadow-lg px-4 py-3 flex items-center gap-3">
               <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
               <div className="text-xs">
-                <b className="text-fg text-[13px] block">3 new fits today</b>
-                <span className="text-fg-muted text-2xs">Based on your profile</span>
+                <b className="text-fg text-xs block">{pingCard.label}</b>
+                <span className="text-fg-muted text-2xs">
+                  {pingCard.sublabel}
+                </span>
               </div>
             </div>
           </div>
@@ -232,7 +249,7 @@ const HeroA: React.FC<Omit<HeroSectionProps, "variant" | "media">> = ({
 
         {/* Marks / press mentions */}
         {marks && marks.length > 0 && (
-          <div className="flex items-center gap-[22px] justify-center py-6 pt-6 pb-7 border-t border-border text-2xs font-extrabold uppercase tracking-widest text-fg-muted flex-wrap">
+          <div className="flex items-center gap-5.5 justify-center py-6 pt-6 pb-7 border-t border-border text-2xs font-extrabold uppercase tracking-widest text-fg-muted flex-wrap">
             <span className="opacity-70">As seen in</span>
             {marks.map((mark, i) => (
               <React.Fragment key={mark}>
@@ -258,33 +275,37 @@ const HeroB: React.FC<Omit<HeroSectionProps, "variant" | "media">> = ({
   ctaPrimary,
   ctaSecondary,
   stats,
+  heroImages = {
+    main: "/assets/hero-woman-laptop.jpg",
+    secondary: "/assets/hero-woman-laptop.jpg",
+  },
 }) => {
   return (
     <section className="px-8 py-8">
-      <div className="max-w-[1320px] mx-auto bg-[#0a1628] text-[#f8fafc] rounded-[48px] px-8 py-14 lg:px-[72px] lg:py-16 relative overflow-hidden min-h-[620px]">
+      <div className="max-w-8xl mx-auto bg-bg text-fg rounded-5xl px-8 py-14 lg:px-18 lg:py-16 relative overflow-hidden min-h-[620px]">
         <div className="grid grid-cols-1 lg:grid-cols-[1.1fr_0.9fr] gap-16 items-center">
           {/* Left column */}
           <div>
             {eyebrow && (
-              <span className="inline-flex items-center gap-2.5 text-2xs font-extrabold uppercase tracking-widest text-[#94a3b8] px-4 py-[7px] rounded-full bg-white/5 border border-white/10">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#0fb8a6]" />
+              <span className="inline-flex items-center gap-2.5 text-2xs font-extrabold uppercase tracking-widest text-fg-muted px-4 py-1.5 rounded-full bg-white/5 border border-white/10">
+                <span className="w-1.5 h-1.5 rounded-full bg-primary" />
                 {eyebrow}
               </span>
             )}
 
-            <h1 className="text-hero-b leading-none tracking-tighter font-bold text-[#f8fafc] mt-6 mb-6">
+            <Heading as="h1" size="hero-b" className="mt-6 mb-6">
               {title}
-            </h1>
+            </Heading>
 
-            <p className="text-lg leading-relaxed text-[#f8fafc]/65 max-w-[480px] mb-8">
+            <Paragraph size="lg" muted className="mb-8 max-w-lg">
               {subtitle}
-            </p>
+            </Paragraph>
 
             <div className="flex gap-3">
               {ctaPrimary && (
                 <a
                   href={ctaPrimary.href || "#"}
-                  className="inline-flex items-center gap-2 bg-[#0fb8a6] text-[#0a1628] px-[30px] py-4 rounded-full font-extrabold text-sm hover:brightness-110 transition-all"
+                  className="inline-flex items-center gap-2 bg-primary text-bg px-7 py-4 rounded-full font-extrabold text-sm hover:brightness-110 transition-all"
                 >
                   {ctaPrimary.label}
                   <Icon name="ArrowUpRight" size={14} />
@@ -293,7 +314,7 @@ const HeroB: React.FC<Omit<HeroSectionProps, "variant" | "media">> = ({
               {ctaSecondary && (
                 <a
                   href={ctaSecondary.href || "#"}
-                  className="inline-flex items-center gap-2 bg-white/[0.08] text-[#f8fafc] px-7 py-4 rounded-full font-bold text-sm border border-white/[0.15] hover:bg-white/[0.12] transition-all"
+                  className="inline-flex items-center gap-2 bg-white/[0.08] text-fg px-7 py-4 rounded-full font-bold text-sm border border-white/[0.15] hover:bg-white/[0.12] transition-all"
                 >
                   {ctaSecondary.label}
                 </a>
@@ -302,12 +323,12 @@ const HeroB: React.FC<Omit<HeroSectionProps, "variant" | "media">> = ({
           </div>
 
           {/* Right column — image */}
-          <div className="relative rounded-[28px] overflow-hidden aspect-[4/5] hidden lg:block">
-            <span className="absolute top-5 left-5 bg-[#0a1628]/75 backdrop-blur-md text-[#f8fafc] px-3.5 py-2 rounded-full text-2xs font-extrabold uppercase tracking-wide border border-white/15 z-10">
+          <div className="relative rounded-3xl overflow-hidden aspect-[4/5] hidden lg:block">
+            <span className="absolute top-5 left-5 bg-bg/75 backdrop-blur-md text-fg px-3.5 py-2 rounded-full text-2xs font-extrabold uppercase tracking-wide border border-white/15 z-10">
               ● Live matches
             </span>
             <img
-              src="/assets/hero-woman-laptop.jpg"
+              src={heroImages.main}
               alt="Professional"
               className="w-full h-full object-cover"
             />
@@ -319,10 +340,10 @@ const HeroB: React.FC<Omit<HeroSectionProps, "variant" | "media">> = ({
           <div className="mt-14 pt-8 border-t border-white/10 grid grid-cols-2 lg:grid-cols-4 gap-8">
             {stats.map((stat) => (
               <div key={stat.label}>
-                <b className="text-[52px] font-black tracking-tight text-[#0fb8a6] leading-none block">
+                <b className="text-5xl font-black tracking-tight text-primary leading-none block">
                   {stat.value}
                 </b>
-                <span className="text-2xs font-extrabold uppercase tracking-widest text-[#f8fafc]/50 mt-2 block">
+                <span className="text-2xs font-extrabold uppercase tracking-widest text-fg/50 mt-2 block">
                   {stat.label}
                 </span>
               </div>
@@ -345,23 +366,50 @@ const HeroC: React.FC<Omit<HeroSectionProps, "variant" | "media">> = ({
   ctaPrimary,
   ctaSecondary,
   stats,
+  floatCards = [
+    {
+      icon: "◎",
+      company: "Paystack",
+      role: "PM",
+      fit: "98%",
+      pos: "top-10 left-0",
+      delay: "0s",
+    },
+    {
+      icon: "◈",
+      company: "Andela",
+      role: "Staff Eng",
+      fit: "94%",
+      pos: "top-36 right-[-10px]",
+      delay: "-2s",
+    },
+    {
+      icon: "✦",
+      company: "Safaricom",
+      role: "Director",
+      fit: "91%",
+      pos: "bottom-28 -left-5",
+      delay: "-4s",
+    },
+    {
+      icon: "▲",
+      company: "Flutterwave",
+      role: "VP",
+      fit: "88%",
+      pos: "bottom-8 right-10",
+      delay: "-3s",
+    },
+  ],
 }) => {
-  const floatCards = [
-    { icon: "◎", company: "Paystack", role: "PM", fit: "98%", pos: "top-[40px] left-0", delay: "0s" },
-    { icon: "◈", company: "Andela", role: "Staff Eng", fit: "94%", pos: "top-[150px] right-[-10px]", delay: "-2s" },
-    { icon: "✦", company: "Safaricom", role: "Director", fit: "91%", pos: "bottom-[110px] left-[-20px]", delay: "-4s" },
-    { icon: "▲", company: "Flutterwave", role: "VP", fit: "88%", pos: "bottom-[30px] right-10", delay: "-3s" },
-  ];
-
   return (
     <section
       className="relative px-8 py-12 overflow-hidden"
       style={{
         background:
-          "radial-gradient(ellipse 800px 500px at 80% 20%, rgba(0,168,98,0.08), transparent 60%), var(--bg)",
+          "radial-gradient(ellipse 800px 500px at 80% 20%, color-mix(in oklab, var(--primary) 8%, transparent), transparent 60%), var(--bg)",
       }}
     >
-      <div className="max-w-[1320px] mx-auto grid grid-cols-1 lg:grid-cols-[1.05fr_0.95fr] gap-12 items-center min-h-[640px] relative">
+      <div className="max-w-8xl mx-auto grid grid-cols-1 lg:grid-cols-[1.05fr_0.95fr] gap-12 items-center min-h-[640px] relative">
         {/* Left column */}
         <div>
           {eyebrow && (
@@ -371,13 +419,13 @@ const HeroC: React.FC<Omit<HeroSectionProps, "variant" | "media">> = ({
             </span>
           )}
 
-          <h1 className="text-hero-c leading-none tracking-tighter font-bold text-fg mt-6 mb-5">
+          <Heading as="h1" size="hero-c" className="mt-6 mb-5">
             {title}
-          </h1>
+          </Heading>
 
-          <p className="text-lg leading-relaxed text-fg-muted max-w-[540px] mb-8">
+          <Paragraph size="lg" muted className="mb-8 max-w-xl">
             {subtitle}
-          </p>
+          </Paragraph>
 
           <div className="flex gap-3 items-center flex-wrap">
             {ctaPrimary && (
@@ -393,7 +441,7 @@ const HeroC: React.FC<Omit<HeroSectionProps, "variant" | "media">> = ({
             {ctaSecondary && (
               <a
                 href={ctaSecondary.href || "#"}
-                className="inline-flex items-center gap-2 bg-card text-fg px-[26px] py-4 rounded-full font-bold text-sm border-[1.5px] border-border hover:border-primary hover:bg-surface transition-all"
+                className="inline-flex items-center gap-2 bg-card text-fg px-6 py-4 rounded-full font-bold text-sm border-[1.5px] border-border hover:border-primary hover:bg-surface transition-all"
               >
                 {ctaSecondary.label}
               </a>
@@ -401,10 +449,10 @@ const HeroC: React.FC<Omit<HeroSectionProps, "variant" | "media">> = ({
           </div>
 
           {stats && stats.length > 0 && (
-            <div className="mt-9 pt-7 border-t border-border flex gap-10 max-w-[540px]">
+            <div className="mt-9 pt-7 border-t border-border flex gap-10 max-w-xl">
               {stats.map((stat) => (
                 <div key={stat.label}>
-                  <b className="text-[32px] font-black tracking-tight leading-none text-fg block">
+                  <b className="text-3xl font-black tracking-tight leading-none text-fg block">
                     {stat.value}
                   </b>
                   <span className="text-2xs font-bold uppercase tracking-wide text-fg-muted mt-1.5 block">
@@ -432,8 +480,12 @@ const HeroC: React.FC<Omit<HeroSectionProps, "variant" | "media">> = ({
 
           {/* Center lottie placeholder */}
           <div className="relative w-80 h-80 rounded-full bg-card border border-border shadow-lg flex items-center justify-center z-[2]">
-            <div className="w-[260px] h-[260px] rounded-full bg-surface/50 border border-border flex items-center justify-center">
-              <Icon name="Orbit" size={80} className="text-primary/40 animate-spin-slow" />
+            <div className="w-64 h-64 rounded-full bg-surface/50 border border-border flex items-center justify-center">
+              <Icon
+                name="Orbit"
+                size={80}
+                className="text-primary/40 animate-spin-slow"
+              />
             </div>
           </div>
 
@@ -442,16 +494,16 @@ const HeroC: React.FC<Omit<HeroSectionProps, "variant" | "media">> = ({
             <div
               key={card.company}
               className={cn(
-                "absolute bg-card border border-border rounded-[18px] shadow-lg px-4 py-3.5 flex gap-3 items-center z-[3] animate-float-y",
-                card.pos
+                "absolute bg-card border border-border rounded-xl shadow-lg px-4 py-3.5 flex gap-3 items-center z-[3] animate-float-y",
+                card.pos,
               )}
               style={{ animationDelay: card.delay }}
             >
-              <div className="w-9 h-9 rounded-[10px] bg-surface flex items-center justify-center text-base text-primary flex-shrink-0">
+              <div className="w-9 h-9 rounded-lg bg-surface flex items-center justify-center text-base text-primary flex-shrink-0">
                 {card.icon}
               </div>
               <div>
-                <b className="text-[13px] font-extrabold text-fg block">
+                <b className="text-xs font-extrabold text-fg block">
                   {card.company} · {card.role}
                 </b>
                 <span className="text-2xs text-fg-muted">{card.fit} fit</span>
@@ -460,7 +512,7 @@ const HeroC: React.FC<Omit<HeroSectionProps, "variant" | "media">> = ({
           ))}
 
           {/* Chip strip */}
-          <div className="absolute bottom-[-20px] left-1/2 -translate-x-1/2 bg-fg text-bg px-[22px] py-3 rounded-full flex gap-4 items-center shadow-lg text-xs font-bold z-[5]">
+          <div className="absolute -bottom-5 left-1/2 -translate-x-1/2 bg-fg text-bg px-5.5 py-3 rounded-full flex gap-4 items-center shadow-lg text-xs font-bold z-[5]">
             <span className="text-primary font-black">✓</span>
             <span>Scanning 62 vetted roles</span>
             <span className="w-1 h-1 rounded-full bg-white/25" />

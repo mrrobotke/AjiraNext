@@ -13,7 +13,7 @@ export const Spinner: React.FC<SpinnerProps> = ({
   const sizeClasses = {
     sm: "w-4 h-4 border-2",
     md: "w-6 h-6 border-2",
-    lg: "w-8 h-8 border-[3px]",
+    lg: "w-8 h-8 border-3",
   };
 
   return (
@@ -21,7 +21,7 @@ export const Spinner: React.FC<SpinnerProps> = ({
       className={cn(
         "inline-block rounded-full border-current border-t-transparent animate-spin",
         sizeClasses[size],
-        className
+        className,
       )}
       role="status"
       aria-label="Loading"

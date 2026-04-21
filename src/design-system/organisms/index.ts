@@ -1,3 +1,5 @@
+export { AuthForm } from "./AuthForm";
+export { AuthSidebar } from "./AuthSidebar";
 export { DashboardSidebar } from "./DashboardSidebar";
 export { FilterPanel } from "./FilterPanel";
 export { Footer } from "./Footer";

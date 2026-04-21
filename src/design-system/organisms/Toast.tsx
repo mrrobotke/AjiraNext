@@ -17,11 +17,11 @@ export const Toast: React.FC<ToastProps> = ({
   return (
     <div
       className={cn(
-        "fixed bottom-6 left-1/2 -translate-x-1/2 z-[200]",
+        "fixed bottom-6 left-1/2 -translate-x-1/2 z-toast",
         "bg-fg text-bg px-6 py-3 rounded-full",
         "text-sm font-bold shadow-lg",
         "animate-pop-in",
-        className
+        className,
       )}
       role="status"
       {...rest}

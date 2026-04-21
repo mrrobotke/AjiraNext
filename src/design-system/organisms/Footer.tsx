@@ -5,7 +5,7 @@ import { Paragraph } from "@/design-system/atoms/Paragraph";
 import { Link } from "@/design-system/atoms/Link";
 import { IconButton } from "@/design-system/atoms/IconButton";
 
-export interface FooterProps extends React.HTMLAttributes<HTMLElement> {}
+export type FooterProps = React.HTMLAttributes<HTMLElement>;
 
 const columns = [
   {
@@ -56,17 +56,14 @@ const socials = [
 export const Footer: React.FC<FooterProps> = ({ className, ...rest }) => {
   return (
     <footer
-      className={cn(
-        "bg-bg border-t border-border py-14 px-8",
-        className
-      )}
+      className={cn("bg-bg border-t border-border py-14 px-8", className)}
       {...rest}
     >
       <div className="max-w-page mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-6 gap-8 mb-10">
           <div className="md:col-span-2">
             <Logo />
-            <Paragraph size="sm" className="mt-3 max-w-xs">
+            <Paragraph size="sm" muted className="mt-3 max-w-xs">
               The elite career platform for high-impact professionals across
               Africa.
             </Paragraph>

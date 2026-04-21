@@ -1,10 +1,9 @@
 import React from "react";
 import { cn } from "@/lib/utils";
-import { SearchInput } from "@/design-system/atoms/SearchInput";
+import { TextInput } from "@/design-system/atoms/TextInput";
 import { IconButton } from "@/design-system/atoms/IconButton";
 
-export interface SearchBarProps
-  extends React.FormHTMLAttributes<HTMLFormElement> {
+export interface SearchBarProps extends React.FormHTMLAttributes<HTMLFormElement> {
   placeholder?: string;
   onSearch?: (value: string) => void;
   defaultValue?: string;
@@ -30,7 +29,8 @@ export const SearchBar: React.FC<SearchBarProps> = ({
       className={cn("flex items-center gap-2", className)}
       {...rest}
     >
-      <SearchInput
+      <TextInput
+        leadingIcon="Search"
         value={value}
         onChange={(e) => setValue(e.target.value)}
         placeholder={placeholder}

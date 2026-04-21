@@ -1,8 +1,7 @@
 import React from "react";
 import { cn } from "@/lib/utils";
 
-export interface RadioProps
-  extends React.InputHTMLAttributes<HTMLInputElement> {}
+export type RadioProps = React.InputHTMLAttributes<HTMLInputElement>;
 
 export const Radio = React.forwardRef<HTMLInputElement, RadioProps>(
   ({ className, ...rest }, ref) => {
@@ -12,12 +11,13 @@ export const Radio = React.forwardRef<HTMLInputElement, RadioProps>(
         type="radio"
         className={cn(
           "w-4 h-4 border border-border bg-card text-primary accent-primary cursor-pointer",
-          className
+          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-bg",
+          className,
         )}
         {...rest}
       />
     );
-  }
+  },
 );
 
 Radio.displayName = "Radio";

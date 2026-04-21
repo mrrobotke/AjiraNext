@@ -7,28 +7,23 @@ const chipVariants = cva(
   {
     variants: {
       variant: {
-        accent:
-          "bg-accent/10 text-accent border border-accent",
-        green:
-          "bg-primary/12 text-primary",
-        muted:
-          "bg-surface text-fg-muted border border-border",
+        accent: "bg-accent/10 text-accent border border-accent",
+        green: "bg-primary/12 text-primary",
+        muted: "bg-surface text-fg-muted border border-border",
         red: "bg-danger/12 text-danger",
         blue: "bg-info/12 text-info",
-        yellow:
-          "bg-warning/14 text-amber-700",
-        pill:
-          "px-3 py-1.5 font-bold rounded-full",
+        yellow: "bg-warning/14 text-amber-700",
       },
     },
     defaultVariants: {
       variant: "muted",
     },
-  }
+  },
 );
 
 export interface ChipProps
-  extends React.HTMLAttributes<HTMLSpanElement>,
+  extends
+    React.HTMLAttributes<HTMLSpanElement>,
     VariantProps<typeof chipVariants> {}
 
 export const Chip: React.FC<ChipProps> = ({
