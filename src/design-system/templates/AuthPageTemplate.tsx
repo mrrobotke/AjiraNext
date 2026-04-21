@@ -1,43 +1,431 @@
 import React from "react";
 import { cn } from "@/lib/utils";
 import { Logo } from "@/design-system/atoms/Logo";
+import { Button } from "@/design-system/atoms/Button";
+import { FormField } from "@/design-system/molecules/FormField";
+import { TextInput } from "@/design-system/atoms/TextInput";
+import { Icon } from "@/design-system/atoms/Icon";
 
-export interface AuthPageTemplateProps
-  extends React.HTMLAttributes<HTMLDivElement> {
-  children: React.ReactNode;
-  title: string;
-  subtitle?: string;
+/* ------------------------------------------------------------------ */
+/*  Types                                                              */
+/* ------------------------------------------------------------------ */
+
+export type AuthMode = "signin" | "signup" | "reset" | "otp";
+export type AuthRole = "seeker" | "employer";
+
+export interface AuthPageTemplateProps {
+  mode?: AuthMode;
+  onModeChange?: (mode: AuthMode) => void;
+  onSocialSignIn?: (provider: "google" | "linkedin") => void;
+  onSubmit?: (data: {
+    email: string;
+    password: string;
+    fullName?: string;
+    role?: AuthRole;
+    otp?: string;
+  }) => void;
+  role?: AuthRole;
+  onRoleChange?: (role: AuthRole) => void;
+  loading?: boolean;
+  className?: string;
 }
 
+/* ------------------------------------------------------------------ */
+/*  Sidebar content                                                    */
+/* ------------------------------------------------------------------ */
+
+const features = [
+  "Precision matching on every application",
+  "Free Resume Health Check (ATS score + rewrite)",
+  "AI-powered Interview Prep and Cover Letters",
+  "Transparent salaries on every listing",
+];
+
+const Sidebar: React.FC = () => (
+  <aside className="hidden lg:flex bg-fg text-bg flex-col justify-between p-12 xl:p-16">
+    <div>
+      <Logo className="text-bg mb-8" />
+      <h2 className="text-[56px] font-black tracking-tight leading-[1.02] mb-5">
+        Your next role,{" "}
+        <em className="not-italic text-primary">measured in days.</em>
+      </h2>
+
+      <ul className="flex flex-col gap-3.5">
+        {features.map((f) => (
+          <li key={f} className="flex gap-3 items-start text-[15px] leading-relaxed opacity-90">
+            <span className="text-primary font-black mt-0.5">✓</span>
+            {f}
+          </li>
+        ))}
+      </ul>
+
+      {/* Testimonial */}
+      <div className="bg-white/[0.06] rounded-2xl p-6 mt-8">
+        <p className="text-[15px] leading-relaxed opacity-90">
+          "I got 4 interviews in my first week. Ajira Next is the only board
+          where the matches actually match."
+        </p>
+        <div className="flex items-center gap-2.5 mt-3.5">
+          <div className="w-9 h-9 rounded-full bg-white/[0.15] text-white flex items-center justify-center font-black text-xs">
+            AO
+          </div>
+          <div className="text-[13px]">
+            <b className="block">Amina Okafor</b>
+            <span className="opacity-70 text-2xs">Product Strategist · Paystack</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div className="text-2xs opacity-60 mt-8">© 2026 Ajira Next · Nairobi</div>
+  </aside>
+);
+
+/* ------------------------------------------------------------------ */
+/*  Social buttons                                                     */
+/* ------------------------------------------------------------------ */
+
+const SocialButton: React.FC<{
+  provider: "google" | "linkedin";
+  onClick?: () => void;
+}> = ({ provider, onClick }) => {
+  const isGoogle = provider === "google";
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={cn(
+        "flex items-center justify-center gap-2.5 w-full",
+        "px-4 py-2.5 rounded-xl border border-border bg-card",
+        "text-sm font-bold text-fg",
+        "hover:border-primary transition-colors duration-150"
+      )}
+    >
+      {isGoogle ? (
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M17.64 9.205c0-.639-.057-1.252-.164-1.841H9v3.481h4.844a4.14 4.14 0 01-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.615z" fill="#4285F4"/>
+          <path d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.583-5.036-3.711H.957v2.332A8.997 8.997 0 009 18z" fill="#34A853"/>
+          <path d="M3.964 10.71A5.41 5.41 0 013.682 9c0-.593.102-1.165.282-1.71V4.958H.957A8.996 8.996 0 000 9c0 1.452.348 2.823.957 4.042l3.007-2.332z" fill="#FBBC05"/>
+          <path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 00.957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58z" fill="#EA4335"/>
+        </svg>
+      ) : (
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M16.65 0H1.35C.607 0 0 .6 0 1.34v15.32C0 17.4.607 18 1.35 18h15.3c.743 0 1.35-.6 1.35-1.34V1.34C18 .6 17.393 0 16.65 0z" fill="#0A66C2"/>
+          <path d="M5.27 6.86H2.85v8.03h2.42V6.86zM4.06 5.78a1.4 1.4 0 110-2.8 1.4 1.4 0 010 2.8zM15.15 10.34c0-2.5-1.34-3.66-3.13-3.66-1.44 0-2.08.79-2.44 1.35V6.86H7.16c.03.71 0 8.03 0 8.03h2.42v-4.48c0-.22.02-.43.08-.59.17-.43.56-.88 1.22-.88.86 0 1.2.65 1.2 1.61v4.34h2.42l-.02-4.85c0-1.3-.23-2.3-1.43-2.3z" fill="#fff"/>
+        </svg>
+      )}
+      {isGoogle ? "Google" : "LinkedIn"}
+    </button>
+  );
+};
+
+/* ------------------------------------------------------------------ */
+/*  Divider                                                            */
+/* ------------------------------------------------------------------ */
+
+const Divider: React.FC<{ text: string }> = ({ text }) => (
+  <div className="flex items-center gap-3.5 text-fg-muted text-2xs tracking-wide my-4">
+    <span className="flex-1 h-px bg-border" />
+    {text}
+    <span className="flex-1 h-px bg-border" />
+  </div>
+);
+
+/* ------------------------------------------------------------------ */
+/*  Role picker                                                        */
+/* ------------------------------------------------------------------ */
+
+const RolePicker: React.FC<{
+  role: AuthRole;
+  onChange: (role: AuthRole) => void;
+}> = ({ role, onChange }) => (
+  <div className="grid grid-cols-2 gap-2.5 mb-3.5">
+    <button
+      type="button"
+      onClick={() => onChange("seeker")}
+      className={cn(
+        "text-left p-4 rounded-xl border-2 transition-all duration-150",
+        role === "seeker"
+          ? "border-primary bg-primary/[0.06]"
+          : "border-border hover:border-primary/40"
+      )}
+    >
+      <b className="block text-sm text-fg">Job Seeker</b>
+      <small className="block text-2xs text-fg-muted mt-0.5">
+        Find your next role
+      </small>
+    </button>
+    <button
+      type="button"
+      onClick={() => onChange("employer")}
+      className={cn(
+        "text-left p-4 rounded-xl border-2 transition-all duration-150",
+        role === "employer"
+          ? "border-primary bg-primary/[0.06]"
+          : "border-border hover:border-primary/40"
+      )}
+    >
+      <b className="block text-sm text-fg">Employer</b>
+      <small className="block text-2xs text-fg-muted mt-0.5">
+        Post jobs & hire talent
+      </small>
+    </button>
+  </div>
+);
+
+/* ------------------------------------------------------------------ */
+/*  Main template                                                      */
+/* ------------------------------------------------------------------ */
+
 export const AuthPageTemplate: React.FC<AuthPageTemplateProps> = ({
-  children,
-  title,
-  subtitle,
+  mode: initialMode = "signin",
+  onModeChange,
+  onSocialSignIn,
+  onSubmit,
+  role: initialRole = "seeker",
+  onRoleChange,
+  loading = false,
   className,
-  ...rest
 }) => {
+  const [mode, setMode] = React.useState<AuthMode>(initialMode);
+  const [role, setRole] = React.useState<AuthRole>(initialRole);
+  const [email, setEmail] = React.useState("");
+  const [password, setPassword] = React.useState("");
+  const [fullName, setFullName] = React.useState("");
+  const [otp, setOtp] = React.useState("");
+  const [resetSent, setResetSent] = React.useState(false);
+
+  React.useEffect(() => {
+    setMode(initialMode);
+  }, [initialMode]);
+
+  const handleMode = (newMode: AuthMode) => {
+    setMode(newMode);
+    setResetSent(false);
+    onModeChange?.(newMode);
+  };
+
+  const handleRole = (newRole: AuthRole) => {
+    setRole(newRole);
+    onRoleChange?.(newRole);
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    onSubmit?.({ email, password, fullName, role, otp });
+  };
+
+  const isSignIn = mode === "signin";
+  const isSignUp = mode === "signup";
+  const isReset = mode === "reset";
+  const isOtp = mode === "otp";
+
   return (
     <div
       className={cn(
-        "min-h-screen flex items-center justify-center px-6 py-12",
+        "min-h-screen grid grid-cols-1 lg:grid-cols-2 bg-bg",
         className
       )}
-      {...rest}
     >
-      <div className="w-full max-w-md">
-        <div className="text-center mb-8">
-          <Logo className="mx-auto mb-6" />
-          <h1 className="text-2xl font-extrabold text-fg mb-2">
-            {title}
-          </h1>
-          {subtitle && (
-            <p className="text-sm text-fg-muted">{subtitle}</p>
-          )}
-        </div>
-        <div className="bg-card border border-border rounded-2xl p-8">
-          {children}
-        </div>
-      </div>
+      <Sidebar />
+
+      {/* Form area */}
+      <main className="flex flex-col justify-center px-8 py-12 lg:px-12 xl:px-16 max-w-[520px] mx-auto w-full">
+        {/* Mode tabs (signin / signup only) */}
+        {!isReset && !isOtp && (
+          <div className="inline-flex bg-surface rounded-full p-1 gap-0.5 mb-6 w-fit">
+            <button
+              type="button"
+              onClick={() => handleMode("signin")}
+              className={cn(
+                "px-5 py-2 rounded-full text-xs font-bold transition-all",
+                isSignIn
+                  ? "bg-card text-fg shadow-xs"
+                  : "text-fg-muted hover:text-fg"
+              )}
+            >
+              Sign In
+            </button>
+            <button
+              type="button"
+              onClick={() => handleMode("signup")}
+              className={cn(
+                "px-5 py-2 rounded-full text-xs font-bold transition-all",
+                isSignUp
+                  ? "bg-card text-fg shadow-xs"
+                  : "text-fg-muted hover:text-fg"
+              )}
+            >
+              Sign Up
+            </button>
+          </div>
+        )}
+
+        {/* Headline */}
+        {isReset ? (
+          <>
+            <h1 className="text-[34px] font-black tracking-tight text-fg mb-2">
+              Reset your password
+            </h1>
+            <p className="text-fg-muted mb-5">
+              Enter your email and we&apos;ll send a reset link.
+            </p>
+          </>
+        ) : isOtp ? (
+          <>
+            <h1 className="text-[34px] font-black tracking-tight text-fg mb-2">
+              Enter the code
+            </h1>
+            <p className="text-fg-muted mb-5">
+              We sent a 6-digit code to your email.
+            </p>
+          </>
+        ) : (
+          <>
+            <span className="inline-flex w-fit bg-card border border-border text-fg px-3.5 py-1.5 rounded-full text-2xs font-extrabold uppercase tracking-widest mb-3">
+              {isSignUp ? "Create account" : "Welcome back"}
+            </span>
+            <h1 className="text-[34px] font-black tracking-tight text-fg mb-2">
+              {isSignUp ? "Sign up for Ajira Next" : "Sign in to Ajira Next"}
+            </h1>
+          </>
+        )}
+
+        {/* Social login (signin / signup only) */}
+        {!isReset && !isOtp && (
+          <>
+            <div className="grid grid-cols-2 gap-2.5">
+              <SocialButton
+                provider="google"
+                onClick={() => onSocialSignIn?.("google")}
+              />
+              <SocialButton
+                provider="linkedin"
+                onClick={() => onSocialSignIn?.("linkedin")}
+              />
+            </div>
+            <Divider text="or continue with email" />
+          </>
+        )}
+
+        {/* Form */}
+        {isReset && resetSent ? (
+          <div className="bg-card border border-border rounded-2xl p-7 text-center">
+            <div className="text-5xl text-primary mb-3">✓</div>
+            <h3 className="text-xl font-extrabold text-fg mb-2">
+              Check your inbox
+            </h3>
+            <p className="text-fg-muted text-sm">
+              We sent a link to the email you provided.
+            </p>
+          </div>
+        ) : (
+          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+            {/* Role picker (signup only) */}
+            {isSignUp && (
+              <RolePicker role={role} onChange={handleRole} />
+            )}
+
+            {/* Full name (signup only) */}
+            {isSignUp && (
+              <FormField label="Full name">
+                <TextInput
+                  required
+                  placeholder="Amina Okafor"
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
+                />
+              </FormField>
+            )}
+
+            {/* Email */}
+            <FormField label="Email">
+              <TextInput
+                type="email"
+                required
+                placeholder="you@example.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </FormField>
+
+            {/* OTP */}
+            {isOtp && (
+              <FormField label="6-digit code">
+                <TextInput
+                  required
+                  placeholder="123456"
+                  maxLength={6}
+                  value={otp}
+                  onChange={(e) => setOtp(e.target.value)}
+                />
+              </FormField>
+            )}
+
+            {/* Password */}
+            {!isOtp && (
+              <FormField label="Password">
+                <TextInput
+                  type="password"
+                  required
+                  placeholder="••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+              </FormField>
+            )}
+
+            {/* Forgot password (signin only) */}
+            {isSignIn && (
+              <div className="text-right">
+                <button
+                  type="button"
+                  onClick={() => handleMode("reset")}
+                  className="text-xs font-bold text-primary hover:underline"
+                >
+                  Forgot password?
+                </button>
+              </div>
+            )}
+
+            {/* Submit */}
+            <Button
+              type="submit"
+              className="w-full mt-2"
+              loading={loading}
+            >
+              {isSignUp
+                ? "Create account"
+                : isReset
+                ? "Send reset link"
+                : isOtp
+                ? "Verify"
+                : "Sign in"}
+            </Button>
+          </form>
+        )}
+
+        {/* Footer links */}
+        {isReset && (
+          <button
+            type="button"
+            onClick={() => handleMode("signin")}
+            className="mt-4 text-sm font-bold text-primary hover:underline text-left"
+          >
+            ← Back to sign in
+          </button>
+        )}
+
+        {isOtp && (
+          <button
+            type="button"
+            onClick={() => handleMode("signin")}
+            className="mt-4 text-sm font-bold text-primary hover:underline text-left"
+          >
+            ← Back to sign in
+          </button>
+        )}
+      </main>
     </div>
   );
 };
