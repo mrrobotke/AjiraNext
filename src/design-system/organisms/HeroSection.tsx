@@ -267,7 +267,7 @@ const HeroB: React.FC<Omit<HeroSectionProps, "variant" | "media">> = ({
           <div>
             {eyebrow && (
               <span className="inline-flex items-center gap-2.5 text-2xs font-extrabold uppercase tracking-widest text-[#94a3b8] px-4 py-[7px] rounded-full bg-white/5 border border-white/10">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#00d67d]" />
+                <span className="w-1.5 h-1.5 rounded-full bg-[#0fb8a6]" />
                 {eyebrow}
               </span>
             )}
@@ -284,7 +284,7 @@ const HeroB: React.FC<Omit<HeroSectionProps, "variant" | "media">> = ({
               {ctaPrimary && (
                 <a
                   href={ctaPrimary.href || "#"}
-                  className="inline-flex items-center gap-2 bg-[#00d67d] text-[#0a1628] px-[30px] py-4 rounded-full font-extrabold text-sm hover:brightness-110 transition-all"
+                  className="inline-flex items-center gap-2 bg-[#0fb8a6] text-[#0a1628] px-[30px] py-4 rounded-full font-extrabold text-sm hover:brightness-110 transition-all"
                 >
                   {ctaPrimary.label}
                   <Icon name="ArrowUpRight" size={14} />
@@ -319,7 +319,7 @@ const HeroB: React.FC<Omit<HeroSectionProps, "variant" | "media">> = ({
           <div className="mt-14 pt-8 border-t border-white/10 grid grid-cols-2 lg:grid-cols-4 gap-8">
             {stats.map((stat) => (
               <div key={stat.label}>
-                <b className="text-[52px] font-black tracking-tight text-[#00d67d] leading-none block">
+                <b className="text-[52px] font-black tracking-tight text-[#0fb8a6] leading-none block">
                   {stat.value}
                 </b>
                 <span className="text-2xs font-extrabold uppercase tracking-widest text-[#f8fafc]/50 mt-2 block">

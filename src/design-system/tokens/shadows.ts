@@ -3,7 +3,7 @@ export const shadows = {
   sm: "0 2px 8px hsl(0 0% 0% / 0.25)",
   md: "0 8px 24px hsl(0 0% 0% / 0.35)",
   lg: "0 20px 40px hsl(0 0% 0% / 0.45)",
-  glow: "0 0 0 1px hsl(155 100% 42% / 0.25), 0 12px 32px hsl(155 100% 42% / 0.15)",
+  glow: "0 0 0 1px hsl(174 85% 39% / 0.25), 0 12px 32px hsl(174 85% 39% / 0.15)",
   editorial: "0 12px 40px hsl(0 0% 0% / 0.3)",
   /* Light theme variants */
   "light-xs": "0 1px 2px hsl(216 60% 10% / 0.06)",

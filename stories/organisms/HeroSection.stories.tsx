@@ -70,7 +70,7 @@ export const VariantB: Story = {
     eyebrow: "Precision · Africa · 2026",
     title: (
       <>
-        Careers, <em className="italic font-normal text-[#00d67d] font-serif tracking-tight">engineered.</em>
+        Careers, <em className="italic font-normal text-[#0fb8a6] font-serif tracking-tight">engineered.</em>
       </>
     ),
     subtitle:

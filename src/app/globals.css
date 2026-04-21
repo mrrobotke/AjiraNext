@@ -13,13 +13,13 @@
   --fg: hsl(210 40% 98%);
   --fg-muted: hsl(215 20% 65%);
   --fg-inverse: hsl(216 60% 10%);
-  --primary: hsl(155 100% 42%);
-  --primary-hover: hsl(155 100% 50%);
+  --primary: hsl(174 85% 39%);
+  --primary-hover: hsl(174 85% 46%);
   --primary-fg: hsl(216 60% 10%);
   --accent: hsl(32 95% 60%);
   --border: hsl(217 25% 30%);
-  --ring: hsl(155 100% 42%);
-  --ring-focus: hsl(155 100% 42% / 0.18);
+  --ring: hsl(174 85% 39%);
+  --ring-focus: hsl(174 85% 39% / 0.18);
   --danger-ring-focus: hsl(0 84% 65% / 0.18);
 }
 
@@ -30,13 +30,13 @@
   --fg: hsl(216 60% 10%);
   --fg-muted: hsl(216 12% 48%);
   --fg-inverse: hsl(0 0% 100%);
-  --primary: hsl(155 100% 33%);
-  --primary-hover: hsl(155 100% 42%);
+  --primary: hsl(174 85% 33%);
+  --primary-hover: hsl(174 85% 39%);
   --primary-fg: hsl(0 0% 100%);
   --accent: hsl(25 95% 53%);
   --border: hsl(37 20% 85%);
-  --ring: hsl(155 100% 33%);
-  --ring-focus: hsl(155 100% 33% / 0.18);
+  --ring: hsl(174 85% 33%);
+  --ring-focus: hsl(174 85% 33% / 0.18);
   --danger-ring-focus: hsl(0 84% 65% / 0.18);
 }
 
@@ -98,7 +98,7 @@
   --shadow-sm: 0 2px 8px hsl(0 0% 0% / 0.25);
   --shadow-md: 0 8px 24px hsl(0 0% 0% / 0.35);
   --shadow-lg: 0 20px 40px hsl(0 0% 0% / 0.45);
-  --shadow-glow: 0 0 0 1px hsl(155 100% 42% / 0.25), 0 12px 32px hsl(155 100% 42% / 0.15);
+  --shadow-glow: 0 0 0 1px hsl(174 85% 39% / 0.25), 0 12px 32px hsl(174 85% 39% / 0.15);
   --shadow-editorial: 0 12px 40px hsl(0 0% 0% / 0.3);
   --shadow-focus: 0 0 0 3px var(--ring-focus);
   --shadow-focus-danger: 0 0 0 3px var(--danger-ring-focus);

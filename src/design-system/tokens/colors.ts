@@ -16,9 +16,9 @@ export const colors = {
 
   /* Primary green */
   green: {
-    500: "hsl(155 100% 42%)",
-    400: "hsl(155 100% 50%)",
-    600: "hsl(155 100% 33%)",
+    500: "hsl(174 85% 39%)",
+    400: "hsl(174 85% 46%)",
+    600: "hsl(174 85% 33%)",
   },
 
   /* Orange accent */
@@ -53,12 +53,12 @@ export const colors = {
     fg: "hsl(210 40% 98%)",
     "fg-muted": "hsl(215 20% 65%)",
     "fg-inverse": "hsl(216 60% 10%)",
-    primary: "hsl(155 100% 42%)",
-    "primary-hover": "hsl(155 100% 50%)",
+    primary: "hsl(174 85% 39%)",
+    "primary-hover": "hsl(174 85% 46%)",
     "primary-fg": "hsl(216 60% 10%)",
     accent: "hsl(32 95% 60%)",
     border: "hsl(217 25% 30%)",
-    ring: "hsl(155 100% 42%)",
+    ring: "hsl(174 85% 39%)",
   },
 
   /* Semantic tokens — light */
@@ -69,12 +69,12 @@ export const colors = {
     fg: "hsl(216 60% 10%)",
     "fg-muted": "hsl(216 12% 48%)",
     "fg-inverse": "hsl(0 0% 100%)",
-    primary: "hsl(155 100% 33%)",
-    "primary-hover": "hsl(155 100% 42%)",
+    primary: "hsl(174 85% 33%)",
+    "primary-hover": "hsl(174 85% 39%)",
     "primary-fg": "hsl(0 0% 100%)",
     accent: "hsl(25 95% 53%)",
     border: "hsl(37 20% 85%)",
-    ring: "hsl(155 100% 33%)",
+    ring: "hsl(174 85% 33%)",
   },
 } as const;
 
