@@ -52,3 +52,8 @@ export const SignUp: Story = {
     ),
   },
 };
+
+export const Light: Story = {
+  ...SignIn,
+  globals: { theme: "light" },
+};

@@ -20,3 +20,8 @@ export const ActiveJobs: Story = {
 export const WithThemeToggle: Story = {
   args: { activeLink: "Home", onThemeToggle: () => {}, theme: "dark" },
 };
+
+export const Light: Story = {
+  ...Default,
+  globals: { theme: "light" },
+};

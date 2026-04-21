@@ -27,3 +27,8 @@ export const Default: Story = {
     user: { name: "Amina Okafor", role: "Job Seeker" },
   },
 };
+
+export const Light: Story = {
+  ...Default,
+  globals: { theme: "light" },
+};

@@ -59,3 +59,8 @@ const mockJobs = [
 export const Default: Story = {
   args: { jobs: mockJobs },
 };
+
+export const Light: Story = {
+  ...Default,
+  globals: { theme: "light" },
+};

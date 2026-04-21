@@ -24,3 +24,8 @@ export const Default: Story = {
     featured: "Featured",
   },
 };
+
+export const Light: Story = {
+  ...Default,
+  globals: { theme: "light" },
+};

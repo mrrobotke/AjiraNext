@@ -13,3 +13,8 @@ type Story = StoryObj<typeof Toast>;
 export const Default: Story = {
   args: { message: "Application submitted successfully!", visible: true },
 };
+
+export const Light: Story = {
+  ...Default,
+  globals: { theme: "light" },
+};

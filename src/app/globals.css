@@ -23,7 +23,7 @@
   --danger-ring-focus: hsl(0 84% 65% / 0.18);
 }
 
-html[data-theme="light"] {
+[data-theme="light"] {
   --bg: hsl(40 33% 97%);
   --surface: hsl(40 25% 93%);
   --card: hsl(0 0% 100%);
@@ -67,6 +67,9 @@ html[data-theme="light"] {
 
   /* Custom text sizes (Tailwind defaults already match most mockup sizes) */
   --text-2xs: 0.625rem;
+  --text-hero-a: 5.5rem;    /* 88px */
+  --text-hero-b: 6.75rem;   /* 108px */
+  --text-hero-c: 6rem;      /* 96px */
 
   /* Custom line heights */
   --leading-tight: 1.1;
@@ -109,6 +112,9 @@ html[data-theme="light"] {
   --animate-marquee: marquee 35s linear infinite;
   --animate-spin-slow: spin 40s linear infinite;
   --animate-spin-slower: spin 60s linear infinite reverse;
+  --animate-float-y: float-y 6s ease-in-out infinite;
+  --animate-ring-pulse: ring-pulse 1.8s ease-out infinite;
+  --animate-stroke-slide: strokeslide 4s ease-in-out infinite alternate;
 }
 
 /* ---------- Keyframes ---------- */
@@ -125,6 +131,22 @@ html[data-theme="light"] {
 @keyframes marquee {
   0% { transform: translateX(0); }
   100% { transform: translateX(-50%); }
+}
+
+@keyframes float-y {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-14px); }
+}
+
+@keyframes ring-pulse {
+  0% { box-shadow: 0 0 0 0 color-mix(in oklab, var(--primary) 40%, transparent); }
+  70% { box-shadow: 0 0 0 10px transparent; }
+  100% { box-shadow: 0 0 0 0 transparent; }
+}
+
+@keyframes strokeslide {
+  from { background-position: 0% 0; }
+  to { background-position: 100% 0; }
 }
 
 /* ---------- Base styles ---------- */

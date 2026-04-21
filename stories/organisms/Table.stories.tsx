@@ -27,3 +27,8 @@ export const Default: Story = {
     ],
   },
 };
+
+export const Light: Story = {
+  ...Default,
+  globals: { theme: "light" },
+};

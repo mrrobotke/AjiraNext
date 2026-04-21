@@ -45,3 +45,8 @@ export const Urgent: Story = {
     job: { ...baseJob, featured: "Urgent" as const },
   },
 };
+
+export const Light: Story = {
+  ...Default,
+  globals: { theme: "light" },
+};

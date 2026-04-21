@@ -11,3 +11,8 @@ export default meta;
 type Story = StoryObj<typeof FilterPanel>;
 
 export const Default: Story = {};
+
+export const Light: Story = {
+  ...Default,
+  globals: { theme: "light" },
+};

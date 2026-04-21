@@ -22,7 +22,10 @@ export const Default: Story = {
         subtitle="The elite career platform for high-impact professionals."
         ctaPrimary={{ label: "Explore Jobs" }}
         ctaSecondary={{ label: "For Employers" }}
-        searchPlaceholder="Job title, keyword, or company"
+        searchCells={[
+          { label: "Role or keyword", placeholder: "Senior Product Manager" },
+          { label: "Location", placeholder: "Nairobi, Kenya" },
+        ]}
         searchChips={["Product", "Engineering", "Design", "Data"]}
         stats={[
           { value: "62+", label: "Active Jobs" },
@@ -33,4 +36,9 @@ export const Default: Story = {
       />
     ),
   },
+};
+
+export const Light: Story = {
+  ...Default,
+  globals: { theme: "light" },
 };
