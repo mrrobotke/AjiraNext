@@ -35,9 +35,17 @@ export async function updateSession(request: NextRequest) {
   // supabase.auth.getUser(). A simple mistake can make it very hard to debug
   // issues with users being randomly logged out.
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  let user = null;
+  let authError = false;
+  try {
+    const {
+      data: { user: authUser },
+    } = await supabase.auth.getUser();
+    user = authUser;
+  } catch {
+    // Fail open: if getUser throws, treat as unknown auth state
+    authError = true;
+  }
 
   const isAuthPage =
     request.nextUrl.pathname.startsWith("/auth") ||
@@ -58,10 +66,21 @@ export async function updateSession(request: NextRequest) {
   if (
     user &&
     isAuthPage &&
-    !request.nextUrl.pathname.startsWith("/onboarding")
+    !request.nextUrl.pathname.startsWith("/onboarding") &&
+    !request.nextUrl.searchParams.has("error")
   ) {
     // Authenticated users shouldn't see auth pages
     const role = user.user_metadata?.role;
+    if (!role) {
+      // Role-less users need onboarding
+      const redirectResponse = NextResponse.redirect(
+        new URL("/onboarding", request.url),
+      );
+      supabaseResponse.cookies.getAll().forEach(({ name, value, ...opts }) => {
+        redirectResponse.cookies.set(name, value, opts);
+      });
+      return redirectResponse;
+    }
     const redirectResponse = NextResponse.redirect(
       new URL(getPortalForRole(role), request.url),
     );
@@ -71,7 +90,7 @@ export async function updateSession(request: NextRequest) {
     return redirectResponse;
   }
 
-  if (!user && !isAuthPage && !isPublicPath) {
+  if (!authError && !user && !isAuthPage && !isPublicPath) {
     // This is a protected route but no user is logged in.
     // We redirect to auth with a returnUrl.
     const url = request.nextUrl.clone();

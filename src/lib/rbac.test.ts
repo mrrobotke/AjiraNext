@@ -96,4 +96,34 @@ describe("canAccessPortal", () => {
       canAccessPortal([ROLES.JOB_SEEKER, ROLES.ADMIN_SUPER], "EMPLOYER_PORTAL"),
     ).toBe(true);
   });
+
+  it("returns / for PUBLIC role", () => {
+    expect(getPortalForRole(ROLES.PUBLIC)).toBe("/");
+  });
+
+  it("allows AUTHENTICATED to access JOB_SEEKER_PORTAL", () => {
+    expect(canAccessPortal([ROLES.AUTHENTICATED], "JOB_SEEKER_PORTAL")).toBe(
+      true,
+    );
+  });
+
+  it("allows EMPLOYER_OWNER to access EMPLOYER_PORTAL", () => {
+    expect(canAccessPortal([ROLES.EMPLOYER_OWNER], "EMPLOYER_PORTAL")).toBe(
+      true,
+    );
+  });
+
+  it("allows SUPPORT_AGENT to access SUPPORT_PORTAL", () => {
+    expect(canAccessPortal([ROLES.SUPPORT_AGENT], "SUPPORT_PORTAL")).toBe(true);
+  });
+
+  it("allows MARKETING_MANAGER to access MARKETING_PORTAL", () => {
+    expect(canAccessPortal([ROLES.MARKETING_MANAGER], "MARKETING_PORTAL")).toBe(
+      true,
+    );
+  });
+
+  it("returns false for empty allowedRoles", () => {
+    expect(hasRole([ROLES.JOB_SEEKER], [])).toBe(false);
+  });
 });

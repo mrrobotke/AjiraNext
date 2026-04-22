@@ -1,6 +1,13 @@
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect, vi, afterEach } from "vitest";
 import { parseOnboardingRole, getOnboardingRoleForSignup } from "./onboarding";
 import { ROLES } from "./rbac";
+
+const originalFetch = globalThis.fetch;
+
+afterEach(() => {
+  vi.restoreAllMocks();
+  globalThis.fetch = originalFetch;
+});
 
 describe("parseOnboardingRole", () => {
   it("returns job_seeker for 'job_seeker'", () => {
@@ -70,7 +77,7 @@ describe("syncOnboardingRole", () => {
     );
   });
 
-  it("returns the response on error", async () => {
+  it("returns the response on error status", async () => {
     const fetchMock = vi.fn().mockResolvedValue({ ok: false, status: 503 });
     globalThis.fetch = fetchMock;
 
@@ -79,5 +86,13 @@ describe("syncOnboardingRole", () => {
 
     expect(response.ok).toBe(false);
     expect(response.status).toBe(503);
+  });
+
+  it("throws when fetch throws (network error)", async () => {
+    globalThis.fetch = vi.fn().mockRejectedValue(new Error("Network failure"));
+    const { syncOnboardingRole } = await import("./onboarding");
+    await expect(
+      syncOnboardingRole("test-token", "job_seeker"),
+    ).rejects.toThrow("Network failure");
   });
 });
