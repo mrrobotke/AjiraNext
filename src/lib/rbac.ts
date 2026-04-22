@@ -25,6 +25,12 @@ export const ROLES = {
 
 export type Role = (typeof ROLES)[keyof typeof ROLES];
 
+export function isRole(value: unknown): value is Role {
+  return (
+    typeof value === "string" && Object.values(ROLES).includes(value as Role)
+  );
+}
+
 export const PORTAL_ACCESS = {
   JOB_SEEKER_PORTAL: [ROLES.JOB_SEEKER, ROLES.AUTHENTICATED, ROLES.ADMIN_SUPER],
   EMPLOYER_PORTAL: [
