@@ -7,6 +7,11 @@ import { validateRedirectUrl } from "@/lib/url";
 
 export async function GET(request: NextRequest): Promise<NextResponse> {
   const { searchParams, origin } = new URL(request.url);
+  const providerError = searchParams.get("error");
+  if (providerError) {
+    return NextResponse.redirect(`${origin}/auth?error=oauth_denied`);
+  }
+
   const code = searchParams.get("code");
   const onboardingRole = parseOnboardingRole(
     searchParams.get("onboarding_role"),

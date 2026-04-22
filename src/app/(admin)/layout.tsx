@@ -1,6 +1,8 @@
 import { redirect } from "next/navigation";
 import { getUserRole } from "@/lib/auth";
-import { PORTAL_ACCESS } from "@/lib/rbac";
+import { canAccessPortal } from "@/lib/rbac";
+
+export const dynamic = "force-dynamic";
 
 export default async function AdminLayout({
   children,
@@ -9,7 +11,7 @@ export default async function AdminLayout({
 }) {
   const role = await getUserRole();
 
-  if (!role || !PORTAL_ACCESS.ADMIN_PORTAL.includes(role as never)) {
+  if (!role || !canAccessPortal([role], "ADMIN_PORTAL")) {
     redirect("/auth?error=unauthorized");
   }
 

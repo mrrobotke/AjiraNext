@@ -15,9 +15,12 @@ import { validateRedirectUrl } from "@/lib/url";
 export async function login(formData: FormData) {
   const supabase = await createClient();
 
-  const email = formData.get("email") as string;
-  const password = formData.get("password") as string;
+  const email = formData.get("email");
+  const password = formData.get("password");
   const returnUrl = formData.get("returnUrl") as string | null;
+  if (typeof email !== "string" || typeof password !== "string") {
+    return { error: "Invalid input" };
+  }
 
   const { data, error } = await supabase.auth.signInWithPassword({
     email,
@@ -25,7 +28,11 @@ export async function login(formData: FormData) {
   });
 
   if (error) {
-    return { error: error.message };
+    return { error: mapSafeError(error.message) };
+  }
+
+  if (!data.user.user_metadata?.role) {
+    redirect("/onboarding");
   }
 
   revalidatePath("/", "layout");
@@ -40,9 +47,12 @@ export async function login(formData: FormData) {
 export async function signup(formData: FormData) {
   const supabase = await createClient();
 
-  const email = formData.get("email") as string;
-  const password = formData.get("password") as string;
-  const rawRole = formData.get("role") as string;
+  const email = formData.get("email");
+  const password = formData.get("password");
+  const rawRole = formData.get("role");
+  if (typeof email !== "string" || typeof password !== "string") {
+    return { error: "Invalid input" };
+  }
   const role =
     rawRole === ROLES.JOB_SEEKER || rawRole === ROLES.EMPLOYER_OWNER
       ? rawRole
@@ -59,7 +69,7 @@ export async function signup(formData: FormData) {
   });
 
   if (error) {
-    return { error: error.message };
+    return { error: mapSafeError(error.message) };
   }
 
   revalidatePath("/", "layout");
@@ -133,7 +143,12 @@ export async function setOnboardingRole(
     return { error: "not_authenticated" };
   }
 
-  const response = await syncOnboardingRole(session.access_token, role);
+  let response: Response;
+  try {
+    response = await syncOnboardingRole(session.access_token, role);
+  } catch {
+    return { error: "sync_failed" };
+  }
 
   if (!response.ok) {
     if (response.status === 409) return { error: "role_already_set" };
@@ -160,29 +175,41 @@ export async function setOnboardingRole(
 
 export async function requestPasswordReset(formData: FormData) {
   const supabase = await createClient();
-  const email = formData.get("email") as string;
+  const email = formData.get("email");
 
-  const { error } = await supabase.auth.resetPasswordForEmail(email, {
+  if (typeof email !== "string") {
+    return { error: "Invalid input" };
+  }
+
+  await supabase.auth.resetPasswordForEmail(email, {
     redirectTo: `${config.baseUrl}/auth?mode=reset`,
   });
 
-  if (error) {
-    return { error: error.message };
-  }
-
+  // Always return generic success to prevent account enumeration
   return { success: true };
 }
 
 export async function updatePassword(formData: FormData) {
   const supabase = await createClient();
-  const password = formData.get("password") as string;
+  const password = formData.get("password");
+  if (typeof password !== "string") {
+    return { error: "Invalid input" };
+  }
 
   const { error } = await supabase.auth.updateUser({ password });
 
   if (error) {
-    return { error: error.message };
+    return { error: mapSafeError(error.message) };
   }
 
   revalidatePath("/", "layout");
   return { success: true };
+}
+
+function mapSafeError(raw: string): string {
+  if (raw.includes("Invalid login credentials"))
+    return "Invalid login credentials";
+  if (raw.includes("Email not confirmed"))
+    return "Please confirm your email before signing in.";
+  return "Something went wrong. Please try again.";
 }
