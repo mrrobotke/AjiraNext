@@ -88,4 +88,12 @@ describe("validateRedirectUrl", () => {
       expect(validateRedirectUrl("//evil.com/path")).toBeNull();
     });
   });
+
+  it("handles origin-only same-origin URL", () => {
+    expect(validateRedirectUrl("https://ajiranext.example.com")).toBe("/");
+  });
+
+  it("blocks whitespace-only strings", () => {
+    expect(validateRedirectUrl("   ")).toBeNull();
+  });
 });
