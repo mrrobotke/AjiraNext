@@ -33,15 +33,20 @@ export async function updateSession(request: NextRequest) {
     },
   );
 
+  // IMPORTANT: Avoid writing any logic between createServerClient and
+  // supabase.auth.getUser(). A simple mistake can make it very hard to debug
+  // issues with users being randomly logged out.
+
   let user = null;
+  let authError = false;
   try {
     const {
-      data: { user: u },
+      data: { user: authUser },
     } = await supabase.auth.getUser();
-    user = u;
+    user = authUser;
   } catch {
-    // Fail open — let route-level guards handle auth.
-    return supabaseResponse;
+    // Fail open: if getUser throws, treat as unknown auth state
+    authError = true;
   }
 
   const pathname = request.nextUrl.pathname;
@@ -60,17 +65,27 @@ export async function updateSession(request: NextRequest) {
     pathname.startsWith("/legal") ||
     pathname.startsWith("/_next");
 
-  if (user && isAuthPage && !pathname.startsWith("/onboarding")) {
-    // Don't redirect away if the user is viewing an unauthorized error
-    if (request.nextUrl.searchParams.get("error") === "unauthorized") {
-      return supabaseResponse;
+  if (
+    user &&
+    isAuthPage &&
+    !pathname.startsWith("/onboarding") &&
+    !request.nextUrl.searchParams.has("error")
+  ) {
+    // Authenticated users shouldn't see auth pages
+    const role = user.user_metadata?.role;
+    if (!role) {
+      // Role-less users need onboarding
+      const redirectResponse = NextResponse.redirect(
+        new URL("/onboarding", request.url),
+      );
+      pendingCookies.forEach(({ name, value, options }) => {
+        redirectResponse.cookies.set(name, value, options);
+      });
+      return redirectResponse;
     }
 
-    const role = user.user_metadata?.role;
-    const destination = role ? getPortalForRole(role) : "/onboarding";
-
     const redirectResponse = NextResponse.redirect(
-      new URL(destination, request.url),
+      new URL(getPortalForRole(role), request.url),
     );
     pendingCookies.forEach(({ name, value, options }) => {
       redirectResponse.cookies.set(name, value, options);
@@ -78,7 +93,9 @@ export async function updateSession(request: NextRequest) {
     return redirectResponse;
   }
 
-  if (!user && !isAuthPage && !isPublicPath) {
+  if (!authError && !user && !isAuthPage && !isPublicPath) {
+    // This is a protected route but no user is logged in.
+    // We redirect to auth with a returnUrl.
     const url = request.nextUrl.clone();
     url.pathname = "/auth";
     url.searchParams.set("mode", "signin");
