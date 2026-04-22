@@ -52,6 +52,7 @@ const SocialButton: React.FC<{
         "px-4 py-2.5 rounded-xl border border-border bg-card",
         "text-sm font-bold text-fg",
         "hover:border-primary transition-colors duration-150",
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-bg",
         disabled && "opacity-50 cursor-not-allowed",
       )}
     >
@@ -129,10 +130,12 @@ const RolePicker: React.FC<{
       onClick={() => onChange("seeker")}
       className={cn(
         "text-left p-4 rounded-xl border-2 transition-all duration-150",
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-bg",
         role === "seeker"
-          ? "border-primary bg-primary/[0.06]"
+          ? "border-primary bg-primary/5"
           : "border-border hover:border-primary/40",
       )}
+      aria-pressed={role === "seeker"}
     >
       <b className="block text-sm text-fg">Job Seeker</b>
       <small className="block text-2xs text-fg-muted mt-0.5">
@@ -144,10 +147,12 @@ const RolePicker: React.FC<{
       onClick={() => onChange("employer")}
       className={cn(
         "text-left p-4 rounded-xl border-2 transition-all duration-150",
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-bg",
         role === "employer"
-          ? "border-primary bg-primary/[0.06]"
+          ? "border-primary bg-primary/5"
           : "border-border hover:border-primary/40",
       )}
+      aria-pressed={role === "employer"}
     >
       <b className="block text-sm text-fg">Employer</b>
       <small className="block text-2xs text-fg-muted mt-0.5">
@@ -211,6 +216,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({
             onClick={() => handleMode("signin")}
             className={cn(
               "px-5 py-2 rounded-full text-xs font-bold transition-all",
+              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-bg",
               isSignIn
                 ? "bg-card text-fg shadow-xs"
                 : "text-fg-muted hover:text-fg",
@@ -223,6 +229,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({
             onClick={() => handleMode("signup")}
             className={cn(
               "px-5 py-2 rounded-full text-xs font-bold transition-all",
+              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-bg",
               isSignUp
                 ? "bg-card text-fg shadow-xs"
                 : "text-fg-muted hover:text-fg",
@@ -270,11 +277,12 @@ export const AuthForm: React.FC<AuthFormProps> = ({
             <SocialButton
               provider="google"
               onClick={() => onSocialSignIn?.("google")}
+              disabled={loading}
             />
             <SocialButton
               provider="linkedin"
               onClick={() => onSocialSignIn?.("linkedin")}
-              disabled
+              disabled={loading}
             />
           </div>
           <Divider text="or continue with email" />
@@ -352,7 +360,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({
               <button
                 type="button"
                 onClick={() => handleMode("reset")}
-                className="text-xs font-bold text-primary hover:underline"
+                className="text-xs font-bold text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-bg"
               >
                 Forgot password?
               </button>
@@ -387,7 +395,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({
         <button
           type="button"
           onClick={() => handleMode("signin")}
-          className="mt-4 text-sm font-bold text-primary hover:underline text-left"
+          className="mt-4 text-sm font-bold text-primary hover:underline text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-bg"
         >
           ← Back to sign in
         </button>
@@ -397,7 +405,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({
         <button
           type="button"
           onClick={() => handleMode("signin")}
-          className="mt-4 text-sm font-bold text-primary hover:underline text-left"
+          className="mt-4 text-sm font-bold text-primary hover:underline text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-bg"
         >
           ← Back to sign in
         </button>

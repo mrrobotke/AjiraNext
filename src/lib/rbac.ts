@@ -26,7 +26,7 @@ export const ROLES = {
 export type Role = (typeof ROLES)[keyof typeof ROLES];
 
 export const PORTAL_ACCESS = {
-  JOB_SEEKER_PORTAL: [ROLES.JOB_SEEKER, ROLES.ADMIN_SUPER],
+  JOB_SEEKER_PORTAL: [ROLES.JOB_SEEKER, ROLES.AUTHENTICATED, ROLES.ADMIN_SUPER],
   EMPLOYER_PORTAL: [
     ROLES.EMPLOYER_OWNER,
     ROLES.EMPLOYER_ADMIN,
@@ -66,12 +66,12 @@ export function getPortalForRole(role: Role | null | undefined): string {
     return "/employer";
   }
 
-  if (role === ROLES.SUPPORT_AGENT || role === ROLES.SUPPORT_LEAD) {
-    return "/support";
-  }
-
-  if (role === ROLES.MARKETING_MANAGER) {
-    return "/marketing";
+  if (
+    role === ROLES.SUPPORT_AGENT ||
+    role === ROLES.SUPPORT_LEAD ||
+    role === ROLES.MARKETING_MANAGER
+  ) {
+    return "/admin";
   }
 
   if (role === ROLES.JOB_SEEKER || role === ROLES.AUTHENTICATED) {

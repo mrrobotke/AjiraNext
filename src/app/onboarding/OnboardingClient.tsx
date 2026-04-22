@@ -34,7 +34,10 @@ export default function OnboardingClient() {
         setError("Failed to set up your account. Please try again.");
       }
 
-      setSelectedRole(null);
+      // Only clear selection on success; preserve for retry on error
+      if (!result?.error) {
+        setSelectedRole(null);
+      }
     });
   }
 
@@ -55,7 +58,7 @@ export default function OnboardingClient() {
             type="button"
             onClick={() => handleRoleSelect("job_seeker")}
             disabled={isPending}
-            className={`flex flex-col items-center gap-3 rounded-xl border-2 p-6 text-left transition-colors hover:bg-surface-raised disabled:cursor-not-allowed disabled:opacity-50 ${
+            className={`flex flex-col items-center gap-3 rounded-xl border-2 p-6 text-left transition-colors hover:bg-surface disabled:cursor-not-allowed disabled:opacity-50 ${
               selectedRole === "job_seeker"
                 ? "border-accent bg-accent/5"
                 : "border-border"
@@ -81,7 +84,7 @@ export default function OnboardingClient() {
             type="button"
             onClick={() => handleRoleSelect("employer")}
             disabled={isPending}
-            className={`flex flex-col items-center gap-3 rounded-xl border-2 p-6 text-left transition-colors hover:bg-surface-raised disabled:cursor-not-allowed disabled:opacity-50 ${
+            className={`flex flex-col items-center gap-3 rounded-xl border-2 p-6 text-left transition-colors hover:bg-surface disabled:cursor-not-allowed disabled:opacity-50 ${
               selectedRole === "employer"
                 ? "border-accent bg-accent/5"
                 : "border-border"
