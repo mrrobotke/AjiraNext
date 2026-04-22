@@ -52,3 +52,6 @@ storybook-static
 
 # husky
 .husky/_
+
+# Local worktrees for feature work
+.worktrees/
