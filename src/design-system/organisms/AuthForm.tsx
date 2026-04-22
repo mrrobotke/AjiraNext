@@ -27,6 +27,8 @@ export interface AuthFormProps {
   role?: AuthRole;
   onRoleChange?: (role: AuthRole) => void;
   loading?: boolean;
+  error?: string | null;
+  resetSent?: boolean;
   className?: string;
 }
 
@@ -37,17 +39,20 @@ export interface AuthFormProps {
 const SocialButton: React.FC<{
   provider: "google" | "linkedin";
   onClick?: () => void;
-}> = ({ provider, onClick }) => {
+  disabled?: boolean;
+}> = ({ provider, onClick, disabled }) => {
   const isGoogle = provider === "google";
   return (
     <button
       type="button"
       onClick={onClick}
+      disabled={disabled}
       className={cn(
         "flex items-center justify-center gap-2.5 w-full",
         "px-4 py-2.5 rounded-xl border border-border bg-card",
         "text-sm font-bold text-fg",
         "hover:border-primary transition-colors duration-150",
+        disabled && "opacity-50 cursor-not-allowed",
       )}
     >
       {isGoogle ? (
@@ -164,16 +169,16 @@ export const AuthForm: React.FC<AuthFormProps> = ({
   role = "seeker",
   onRoleChange,
   loading = false,
+  error,
+  resetSent = false,
   className,
 }) => {
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [fullName, setFullName] = React.useState("");
   const [otp, setOtp] = React.useState("");
-  const [resetSent, setResetSent] = React.useState(false);
 
   const handleMode = (newMode: AuthMode) => {
-    setResetSent(false);
     onModeChange?.(newMode);
   };
 
@@ -269,6 +274,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({
             <SocialButton
               provider="linkedin"
               onClick={() => onSocialSignIn?.("linkedin")}
+              disabled
             />
           </div>
           <Divider text="or continue with email" />
@@ -350,6 +356,16 @@ export const AuthForm: React.FC<AuthFormProps> = ({
               >
                 Forgot password?
               </button>
+            </div>
+          )}
+
+          {/* Error */}
+          {error && (
+            <div
+              role="alert"
+              className="bg-danger/10 text-danger text-sm font-bold p-3 rounded-xl"
+            >
+              {error}
             </div>
           )}
 
