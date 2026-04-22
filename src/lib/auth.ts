@@ -2,14 +2,32 @@ import { ROLES, type Role } from "./rbac";
 import { createClient } from "./supabase/server";
 
 /**
- * Fetches the current user's role from Supabase.
- * In development, can be overridden by MOCK_AUTH_ROLE env var.
+ * Runtime type guard for Role values.
  */
-export async function getUserRole(): Promise<Role | null | undefined> {
-  // Allow mock role in development for faster testing
-  if (process.env.NODE_ENV === "development") {
-    const mockRole = process.env.MOCK_AUTH_ROLE as Role | undefined;
-    if (mockRole && Object.values(ROLES).includes(mockRole)) {
+export function isRole(value: unknown): value is Role {
+  return (
+    typeof value === "string" && Object.values(ROLES).includes(value as Role)
+  );
+}
+
+/**
+ * Fetches the current user's role from Supabase.
+ *
+ * ⚠️ SECURITY NOTE: This currently reads `role` from `user.user_metadata`,
+ * which authenticated users can modify client-side via `auth.updateUser()`.
+ * This is acceptable for an MVP but MUST be replaced with a server-side
+ * source (e.g., `profiles` table or custom JWT claims) before production.
+ *
+ * In development, can be overridden by MOCK_AUTH_ROLE when
+ * MOCK_AUTH_ENABLED is explicitly set to "true".
+ */
+export async function getUserRole(): Promise<Role | null> {
+  if (
+    process.env.NODE_ENV === "development" &&
+    process.env.MOCK_AUTH_ENABLED === "true"
+  ) {
+    const mockRole = process.env.MOCK_AUTH_ROLE;
+    if (isRole(mockRole)) {
       return mockRole;
     }
   }
@@ -25,14 +43,12 @@ export async function getUserRole(): Promise<Role | null | undefined> {
       return null;
     }
 
-    // Role is expected to be stored in user_metadata or set by a custom claim/trigger
-    const role = user.user_metadata?.role as Role | undefined;
+    const role = user.user_metadata?.role;
 
-    if (role && Object.values(ROLES).includes(role)) {
+    if (isRole(role)) {
       return role;
     }
 
-    // If logged in but no specific role, default to AUTHENTICATED
     return ROLES.AUTHENTICATED;
   } catch (err) {
     console.error("Error fetching user role:", err);
@@ -44,9 +60,14 @@ export async function getUserRole(): Promise<Role | null | undefined> {
  * Helper to get the full user object if needed.
  */
 export async function getUser() {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  return user;
+  try {
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    return user;
+  } catch (err) {
+    console.error("Error fetching user:", err);
+    return null;
+  }
 }

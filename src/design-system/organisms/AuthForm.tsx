@@ -3,7 +3,10 @@
 import React from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/design-system/atoms/Button";
+import { Eyebrow } from "@/design-system/atoms/Eyebrow";
 import { FormField } from "@/design-system/molecules/FormField";
+import { Heading } from "@/design-system/atoms/Heading";
+import { Paragraph } from "@/design-system/atoms/Paragraph";
 import { TextInput } from "@/design-system/atoms/TextInput";
 
 /* ------------------------------------------------------------------ */
@@ -57,13 +60,7 @@ const SocialButton: React.FC<{
       )}
     >
       {isGoogle ? (
-        <svg
-          width="18"
-          height="18"
-          viewBox="0 0 18 18"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-        >
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
           <path
             d="M17.64 9.205c0-.639-.057-1.252-.164-1.841H9v3.481h4.844a4.14 4.14 0 01-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.615z"
             fill="#4285F4"
@@ -82,13 +79,7 @@ const SocialButton: React.FC<{
           />
         </svg>
       ) : (
-        <svg
-          width="18"
-          height="18"
-          viewBox="0 0 18 18"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-        >
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
           <path
             d="M16.65 0H1.35C.607 0 0 .6 0 1.34v15.32C0 17.4.607 18 1.35 18h15.3c.743 0 1.35-.6 1.35-1.34V1.34C18 .6 17.393 0 16.65 0z"
             fill="#0A66C2"
@@ -182,6 +173,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({
   const [password, setPassword] = React.useState("");
   const [fullName, setFullName] = React.useState("");
   const [otp, setOtp] = React.useState("");
+  const idPrefix = React.useId();
 
   const handleMode = (newMode: AuthMode) => {
     onModeChange?.(newMode);
@@ -201,6 +193,11 @@ export const AuthForm: React.FC<AuthFormProps> = ({
   const isReset = mode === "reset";
   const isOtp = mode === "otp";
 
+  const fullNameId = `${idPrefix}-fullName`;
+  const emailId = `${idPrefix}-email`;
+  const otpId = `${idPrefix}-otp`;
+  const passwordId = `${idPrefix}-password`;
+
   return (
     <div
       className={cn(
@@ -208,14 +205,14 @@ export const AuthForm: React.FC<AuthFormProps> = ({
         className,
       )}
     >
-      {/* Mode tabs (signin / signup only) */}
+      {/* Mode tabs */}
       {!isReset && !isOtp && (
         <div className="inline-flex bg-surface rounded-full p-1 gap-0.5 mb-6 w-fit">
           <button
             type="button"
             onClick={() => handleMode("signin")}
             className={cn(
-              "px-5 py-2 rounded-full text-xs font-bold transition-all",
+              "px-5 py-2.5 rounded-full text-xs font-bold transition-all",
               "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-bg",
               isSignIn
                 ? "bg-card text-fg shadow-xs"
@@ -228,7 +225,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({
             type="button"
             onClick={() => handleMode("signup")}
             className={cn(
-              "px-5 py-2 rounded-full text-xs font-bold transition-all",
+              "px-5 py-2.5 rounded-full text-xs font-bold transition-all",
               "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-bg",
               isSignUp
                 ? "bg-card text-fg shadow-xs"
@@ -243,34 +240,34 @@ export const AuthForm: React.FC<AuthFormProps> = ({
       {/* Headline */}
       {isReset ? (
         <>
-          <h1 className="text-4xl font-black tracking-tight text-fg mb-2">
+          <Heading as="h1" size="4xl" weight="black" className="mb-2">
             Reset your password
-          </h1>
-          <p className="text-fg-muted mb-5">
+          </Heading>
+          <Paragraph muted className="mb-5">
             Enter your email and we&apos;ll send a reset link.
-          </p>
+          </Paragraph>
         </>
       ) : isOtp ? (
         <>
-          <h1 className="text-4xl font-black tracking-tight text-fg mb-2">
+          <Heading as="h1" size="4xl" weight="black" className="mb-2">
             Enter the code
-          </h1>
-          <p className="text-fg-muted mb-5">
+          </Heading>
+          <Paragraph muted className="mb-5">
             We sent a 6-digit code to your email.
-          </p>
+          </Paragraph>
         </>
       ) : (
         <>
-          <span className="inline-flex w-fit bg-card border border-border text-fg px-3.5 py-1.5 rounded-full text-2xs font-extrabold uppercase tracking-widest mb-3">
+          <Eyebrow className="mb-3 inline-flex w-fit bg-card border border-border text-fg px-3.5 py-1.5 rounded-full">
             {isSignUp ? "Create account" : "Welcome back"}
-          </span>
-          <h1 className="text-4xl font-black tracking-tight text-fg mb-2">
+          </Eyebrow>
+          <Heading as="h1" size="4xl" weight="black" className="mb-2">
             {isSignUp ? "Sign up for Ajira Next" : "Sign in to Ajira Next"}
-          </h1>
+          </Heading>
         </>
       )}
 
-      {/* Social login (signin / signup only) */}
+      {/* Social login */}
       {!isReset && !isOtp && (
         <>
           <div className="grid grid-cols-2 gap-2.5">
@@ -293,22 +290,21 @@ export const AuthForm: React.FC<AuthFormProps> = ({
       {isReset && resetSent ? (
         <div className="bg-card border border-border rounded-2xl p-7 text-center">
           <div className="text-5xl text-primary mb-3">✓</div>
-          <h3 className="text-xl font-extrabold text-fg mb-2">
+          <Heading as="h3" size="xl" weight="extrabold" className="mb-2">
             Check your inbox
-          </h3>
-          <p className="text-fg-muted text-sm">
+          </Heading>
+          <Paragraph size="sm" muted>
             We sent a link to the email you provided.
-          </p>
+          </Paragraph>
         </div>
       ) : (
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-          {/* Role picker (signup only) */}
           {isSignUp && <RolePicker role={role} onChange={handleRole} />}
 
-          {/* Full name (signup only) */}
           {isSignUp && (
-            <FormField label="Full name">
+            <FormField label="Full name" inputId={fullNameId}>
               <TextInput
+                id={fullNameId}
                 required
                 placeholder="Amina Okafor"
                 value={fullName}
@@ -317,9 +313,9 @@ export const AuthForm: React.FC<AuthFormProps> = ({
             </FormField>
           )}
 
-          {/* Email */}
-          <FormField label="Email">
+          <FormField label="Email" inputId={emailId}>
             <TextInput
+              id={emailId}
               type="email"
               required
               placeholder="you@example.com"
@@ -328,10 +324,10 @@ export const AuthForm: React.FC<AuthFormProps> = ({
             />
           </FormField>
 
-          {/* OTP */}
           {isOtp && (
-            <FormField label="6-digit code">
+            <FormField label="6-digit code" inputId={otpId}>
               <TextInput
+                id={otpId}
                 required
                 placeholder="123456"
                 maxLength={6}
@@ -341,10 +337,10 @@ export const AuthForm: React.FC<AuthFormProps> = ({
             </FormField>
           )}
 
-          {/* Password */}
           {!isOtp && (
-            <FormField label="Password">
+            <FormField label="Password" inputId={passwordId}>
               <TextInput
+                id={passwordId}
                 type="password"
                 required
                 placeholder="••••••••"
@@ -354,30 +350,28 @@ export const AuthForm: React.FC<AuthFormProps> = ({
             </FormField>
           )}
 
-          {/* Forgot password (signin only) */}
           {isSignIn && (
             <div className="text-right">
               <button
                 type="button"
                 onClick={() => handleMode("reset")}
-                className="text-xs font-bold text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-bg"
+                className="text-xs font-bold text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-bg px-2 py-1 -mr-2"
               >
                 Forgot password?
               </button>
             </div>
           )}
 
-          {/* Error */}
           {error && (
             <div
               role="alert"
+              aria-live="assertive"
               className="bg-danger/10 text-danger text-sm font-bold p-3 rounded-xl"
             >
               {error}
             </div>
           )}
 
-          {/* Submit */}
           <Button type="submit" className="w-full mt-2" loading={loading}>
             {isSignUp
               ? "Create account"
@@ -390,7 +384,6 @@ export const AuthForm: React.FC<AuthFormProps> = ({
         </form>
       )}
 
-      {/* Footer links */}
       {isReset && (
         <button
           type="button"
