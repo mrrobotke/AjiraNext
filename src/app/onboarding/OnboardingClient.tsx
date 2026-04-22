@@ -21,7 +21,10 @@ export default function OnboardingClient() {
     startTransition(async () => {
       const result = await setOnboardingRole(role);
 
-      if (result?.error === "sync_failed") {
+      if (
+        result?.error === "sync_failed" ||
+        result?.error === "request_failed"
+      ) {
         setError(
           "Something went wrong syncing your account. Please try again.",
         );
@@ -34,12 +37,15 @@ export default function OnboardingClient() {
         setError("Failed to set up your account. Please try again.");
       }
 
-      // Only clear selection on success; preserve for retry on error
       if (!result?.error) {
         setSelectedRole(null);
       }
     });
   }
+
+  const retryable =
+    error === "Something went wrong syncing your account. Please try again." ||
+    error === "Failed to set up your account. Please try again.";
 
   return (
     <div className="min-h-screen bg-bg flex items-center justify-center px-4">
@@ -58,7 +64,7 @@ export default function OnboardingClient() {
             type="button"
             onClick={() => handleRoleSelect("job_seeker")}
             disabled={isPending}
-            className={`flex flex-col items-center gap-3 rounded-xl border-2 p-6 text-left transition-colors hover:bg-surface disabled:cursor-not-allowed disabled:opacity-50 ${
+            className={`flex flex-col items-center gap-3 rounded-xl border-2 p-6 text-left transition-colors hover:bg-surface disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-bg ${
               selectedRole === "job_seeker"
                 ? "border-accent bg-accent/5"
                 : "border-border"
@@ -84,7 +90,7 @@ export default function OnboardingClient() {
             type="button"
             onClick={() => handleRoleSelect("employer")}
             disabled={isPending}
-            className={`flex flex-col items-center gap-3 rounded-xl border-2 p-6 text-left transition-colors hover:bg-surface disabled:cursor-not-allowed disabled:opacity-50 ${
+            className={`flex flex-col items-center gap-3 rounded-xl border-2 p-6 text-left transition-colors hover:bg-surface disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-bg ${
               selectedRole === "employer"
                 ? "border-accent bg-accent/5"
                 : "border-border"
@@ -107,12 +113,17 @@ export default function OnboardingClient() {
           </button>
         </div>
 
+        {/* Live region for loading state */}
+        <p aria-live="polite" className="sr-only">
+          {isPending ? "Setting up your account..." : ""}
+        </p>
+
         {error && (
           <div role="alert" aria-live="assertive" className="mt-6">
             <div className="rounded-xl border border-danger/20 bg-danger/10 p-4 text-danger text-sm font-bold">
               {error}
             </div>
-            {error.includes("try again") && (
+            {retryable && (
               <Button
                 variant="outline"
                 size="sm"

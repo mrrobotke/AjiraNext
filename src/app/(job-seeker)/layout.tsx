@@ -1,3 +1,4 @@
+import React from "react";
 import { redirect } from "next/navigation";
 import { getUserRole } from "@/lib/auth";
 import { canAccessPortal } from "@/lib/rbac";
@@ -11,7 +12,11 @@ export default async function JobSeekerLayout({
 }) {
   const role = await getUserRole();
 
-  if (!role || !canAccessPortal([role], "JOB_SEEKER_PORTAL")) {
+  if (!role) {
+    redirect("/auth?mode=signin");
+  }
+
+  if (!canAccessPortal([role], "JOB_SEEKER_PORTAL")) {
     redirect("/auth?error=unauthorized");
   }
 
