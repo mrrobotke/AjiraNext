@@ -2,7 +2,7 @@
 
 import { Suspense } from "react";
 import { AuthPageTemplate } from "@/design-system/templates/AuthPageTemplate";
-import { AuthForm } from "@/design-system/organisms/AuthForm";
+import { AuthForm, AuthMode } from "@/design-system/organisms/AuthForm";
 import { AuthSidebar } from "@/design-system/organisms/AuthSidebar";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState, useCallback } from "react";
@@ -31,7 +31,7 @@ function AuthPageContent() {
   const initialRole =
     (searchParams.get("as") as "seeker" | "employer") ?? "seeker";
 
-  const [mode, setMode] = useState(initialMode);
+  const [mode, setMode] = useState<AuthMode>(initialMode);
   const [role, setRole] = useState(initialRole);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(() => {
@@ -46,8 +46,8 @@ function AuthPageContent() {
   const [resetSent, setResetSent] = useState(false);
 
   const handleModeChange = useCallback(
-    (newMode: "signin" | "signup" | "reset" | "otp") => {
-      setMode(newMode as "signin" | "signup");
+    (newMode: AuthMode) => {
+      setMode(newMode);
       setError(null);
       setResetSent(false);
       const params = new URLSearchParams(searchParams.toString());
@@ -77,8 +77,10 @@ function AuthPageContent() {
       setLoading(true);
       const onboardingRole = role === "employer" ? "employer" : "job_seeker";
       const returnUrl = searchParams.get("returnUrl") ?? undefined;
-      await signInWithGoogle({ onboardingRole, returnUrl });
-      // Note: signInWithGoogle redirects on success, so code below only runs on error
+      const result = await signInWithGoogle({ onboardingRole, returnUrl });
+      if (result?.error) {
+        setError(mapAuthError(result.error));
+      }
       setLoading(false);
     },
     [role, searchParams],
