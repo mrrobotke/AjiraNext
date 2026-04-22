@@ -15,10 +15,13 @@ export async function createClient() {
           cookiesToSet.forEach(({ name, value, options }) =>
             cookieStore.set(name, value, options),
           );
-        } catch {
-          // The `setAll` method was called from a Server Component.
-          // This can be ignored if you have middleware refreshing
-          // user sessions.
+        } catch (err) {
+          const msg = err instanceof Error ? err.message : String(err);
+          // Swallow only the expected Server Component cookie-write error.
+          if (msg.includes("cookies") && msg.includes("Server Component")) {
+            return;
+          }
+          throw err;
         }
       },
     },

@@ -4,9 +4,12 @@ import { config } from "../config";
 import { getPortalForRole } from "../rbac";
 
 export async function updateSession(request: NextRequest) {
-  let supabaseResponse = NextResponse.next({
-    request,
-  });
+  let supabaseResponse = NextResponse.next({ request });
+  const pendingCookies: Array<{
+    name: string;
+    value: string;
+    options: Parameters<typeof supabaseResponse.cookies.set>[2];
+  }> = [];
 
   const supabase = createServerClient(
     config.supabase.url,
@@ -20,60 +23,62 @@ export async function updateSession(request: NextRequest) {
           cookiesToSet.forEach(({ name, value }) =>
             request.cookies.set(name, value),
           );
-          supabaseResponse = NextResponse.next({
-            request,
+          supabaseResponse = NextResponse.next({ request });
+          cookiesToSet.forEach(({ name, value, options }) => {
+            supabaseResponse.cookies.set(name, value, options);
+            pendingCookies.push({ name, value, options });
           });
-          cookiesToSet.forEach(({ name, value, options }) =>
-            supabaseResponse.cookies.set(name, value, options),
-          );
         },
       },
     },
   );
 
-  // IMPORTANT: Avoid writing any logic between createServerClient and
-  // supabase.auth.getUser(). A simple mistake can make it very hard to debug
-  // issues with users being randomly logged out.
+  let user = null;
+  try {
+    const {
+      data: { user: u },
+    } = await supabase.auth.getUser();
+    user = u;
+  } catch {
+    // Fail open — let route-level guards handle auth.
+    return supabaseResponse;
+  }
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
+  const pathname = request.nextUrl.pathname;
   const isAuthPage =
-    request.nextUrl.pathname.startsWith("/auth") ||
-    request.nextUrl.pathname.startsWith("/onboarding");
+    pathname.startsWith("/auth") || pathname.startsWith("/onboarding");
 
   const isPublicPath =
-    request.nextUrl.pathname === "/" ||
-    request.nextUrl.pathname.startsWith("/jobs") ||
-    request.nextUrl.pathname.startsWith("/for-employers") ||
-    request.nextUrl.pathname.startsWith("/pricing") ||
-    request.nextUrl.pathname.startsWith("/about") ||
-    request.nextUrl.pathname.startsWith("/contact") ||
-    request.nextUrl.pathname.startsWith("/blog") ||
-    request.nextUrl.pathname.startsWith("/help") ||
-    request.nextUrl.pathname.startsWith("/legal") ||
-    request.nextUrl.pathname.startsWith("/_next");
+    pathname === "/" ||
+    pathname.startsWith("/jobs") ||
+    pathname.startsWith("/for-employers") ||
+    pathname.startsWith("/pricing") ||
+    pathname.startsWith("/about") ||
+    pathname.startsWith("/contact") ||
+    pathname.startsWith("/blog") ||
+    pathname.startsWith("/help") ||
+    pathname.startsWith("/legal") ||
+    pathname.startsWith("/_next");
 
-  if (
-    user &&
-    isAuthPage &&
-    !request.nextUrl.pathname.startsWith("/onboarding")
-  ) {
-    // Authenticated users shouldn't see auth pages
+  if (user && isAuthPage && !pathname.startsWith("/onboarding")) {
+    // Don't redirect away if the user is viewing an unauthorized error
+    if (request.nextUrl.searchParams.get("error") === "unauthorized") {
+      return supabaseResponse;
+    }
+
     const role = user.user_metadata?.role;
+    const destination = role ? getPortalForRole(role) : "/onboarding";
+
     const redirectResponse = NextResponse.redirect(
-      new URL(getPortalForRole(role), request.url),
+      new URL(destination, request.url),
     );
-    supabaseResponse.cookies.getAll().forEach(({ name, value, ...opts }) => {
-      redirectResponse.cookies.set(name, value, opts);
+    pendingCookies.forEach(({ name, value, options }) => {
+      redirectResponse.cookies.set(name, value, options);
     });
     return redirectResponse;
   }
 
   if (!user && !isAuthPage && !isPublicPath) {
-    // This is a protected route but no user is logged in.
-    // We redirect to auth with a returnUrl.
     const url = request.nextUrl.clone();
     url.pathname = "/auth";
     url.searchParams.set("mode", "signin");
@@ -84,6 +89,5 @@ export async function updateSession(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  // IMPORTANT: You *must* return the supabaseResponse object as it is.
   return supabaseResponse;
 }
