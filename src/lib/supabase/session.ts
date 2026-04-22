@@ -53,13 +53,22 @@ export async function updateSession(request: NextRequest) {
     request.nextUrl.pathname.startsWith("/blog") ||
     request.nextUrl.pathname.startsWith("/help") ||
     request.nextUrl.pathname.startsWith("/legal") ||
-    request.nextUrl.pathname.startsWith("/_next") ||
-    request.nextUrl.pathname.startsWith("/api/");
+    request.nextUrl.pathname.startsWith("/_next");
 
-  if (user && isAuthPage) {
+  if (
+    user &&
+    isAuthPage &&
+    !request.nextUrl.pathname.startsWith("/onboarding")
+  ) {
     // Authenticated users shouldn't see auth pages
     const role = user.user_metadata?.role;
-    return NextResponse.redirect(new URL(getPortalForRole(role), request.url));
+    const redirectResponse = NextResponse.redirect(
+      new URL(getPortalForRole(role), request.url),
+    );
+    supabaseResponse.cookies.getAll().forEach(({ name, value, ...opts }) => {
+      redirectResponse.cookies.set(name, value, opts);
+    });
+    return redirectResponse;
   }
 
   if (!user && !isAuthPage && !isPublicPath) {
