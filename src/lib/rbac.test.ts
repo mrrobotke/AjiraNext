@@ -1,13 +1,31 @@
 import { describe, it, expect } from "vitest";
-import { ROLES, getPortalForRole, hasRole, canAccessPortal } from "./rbac";
+import {
+  ROLES,
+  getPortalForRole,
+  hasRole,
+  canAccessPortal,
+  canAccessOnboarding,
+  isRole,
+} from "./rbac";
+
+describe("isRole", () => {
+  it("returns true for valid roles", () => {
+    expect(isRole(ROLES.JOB_SEEKER)).toBe(true);
+    expect(isRole(ROLES.ADMIN_SUPER)).toBe(true);
+    expect(isRole(ROLES.AUTHENTICATED)).toBe(true);
+  });
+  it("returns false for invalid values", () => {
+    expect(isRole("hacker")).toBe(false);
+    expect(isRole(123)).toBe(false);
+    expect(isRole(null)).toBe(false);
+    expect(isRole(undefined)).toBe(false);
+    expect(isRole("")).toBe(false);
+  });
+});
 
 describe("getPortalForRole", () => {
   it("returns /seeker for job_seeker", () => {
     expect(getPortalForRole(ROLES.JOB_SEEKER)).toBe("/seeker");
-  });
-
-  it("returns /seeker for AUTHENTICATED", () => {
-    expect(getPortalForRole(ROLES.AUTHENTICATED)).toBe("/seeker");
   });
 
   it("returns /employer for employer roles", () => {
@@ -101,9 +119,22 @@ describe("canAccessPortal", () => {
     expect(getPortalForRole(ROLES.PUBLIC)).toBe("/");
   });
 
-  it("allows AUTHENTICATED to access JOB_SEEKER_PORTAL", () => {
+  it("blocks AUTHENTICATED (no real role yet) from JOB_SEEKER_PORTAL — H-1 fix", () => {
     expect(canAccessPortal([ROLES.AUTHENTICATED], "JOB_SEEKER_PORTAL")).toBe(
-      true,
+      false,
+    );
+  });
+
+  it("blocks AUTHENTICATED (no real role yet) from every portal — H-1 fix", () => {
+    expect(canAccessPortal([ROLES.AUTHENTICATED], "EMPLOYER_PORTAL")).toBe(
+      false,
+    );
+    expect(canAccessPortal([ROLES.AUTHENTICATED], "ADMIN_PORTAL")).toBe(false);
+    expect(canAccessPortal([ROLES.AUTHENTICATED], "SUPPORT_PORTAL")).toBe(
+      false,
+    );
+    expect(canAccessPortal([ROLES.AUTHENTICATED], "MARKETING_PORTAL")).toBe(
+      false,
     );
   });
 
@@ -125,5 +156,24 @@ describe("canAccessPortal", () => {
 
   it("returns false for empty allowedRoles", () => {
     expect(hasRole([ROLES.JOB_SEEKER], [])).toBe(false);
+  });
+});
+
+describe("canAccessOnboarding", () => {
+  it("allows null (role-less / pre-onboarding) users", () => {
+    expect(canAccessOnboarding(null)).toBe(true);
+  });
+
+  it("allows AUTHENTICATED sentinel (legacy callers passing it)", () => {
+    expect(canAccessOnboarding(ROLES.AUTHENTICATED)).toBe(true);
+  });
+
+  it("blocks real portal roles — they are already onboarded", () => {
+    expect(canAccessOnboarding(ROLES.JOB_SEEKER)).toBe(false);
+    expect(canAccessOnboarding(ROLES.EMPLOYER_OWNER)).toBe(false);
+    expect(canAccessOnboarding(ROLES.ADMIN_SUPER)).toBe(false);
+    expect(canAccessOnboarding(ROLES.BLOG_AUTHOR)).toBe(false);
+    expect(canAccessOnboarding(ROLES.SUPPORT_AGENT)).toBe(false);
+    expect(canAccessOnboarding(ROLES.MARKETING_MANAGER)).toBe(false);
   });
 });

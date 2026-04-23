@@ -125,7 +125,7 @@ describe("updateSession", () => {
     expect(res.status).toBe(200);
   });
 
-  it("fails open when getUser throws", async () => {
+  it("fails CLOSED when getUser throws (C-2 fix): redirects to /auth?error=SESSION_ERROR", async () => {
     mockCreateServerClient.mockImplementation(
       () =>
         ({
@@ -137,6 +137,25 @@ describe("updateSession", () => {
 
     const req = makeRequest("/seeker");
     const res = await updateSession(req);
-    expect(res.status).toBe(200);
+    expect(res.status).toBe(307);
+    const loc = res.headers.get("location");
+    expect(loc).toContain("/auth");
+    expect(loc).toContain("error=SESSION_ERROR");
+  });
+
+  it("fails closed even on public paths when getUser throws", async () => {
+    mockCreateServerClient.mockImplementation(
+      () =>
+        ({
+          auth: {
+            getUser: vi.fn().mockRejectedValue(new Error("boom")),
+          },
+        }) as unknown as ReturnType<typeof createServerClient>,
+    );
+
+    const req = makeRequest("/");
+    const res = await updateSession(req);
+    expect(res.status).toBe(307);
+    expect(res.headers.get("location")).toContain("error=SESSION_ERROR");
   });
 });

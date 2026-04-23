@@ -1,7 +1,7 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import { config } from "../config";
-import { getPortalForRole } from "../rbac";
+import { getPortalForRole, isRole } from "../rbac";
 
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request });
@@ -38,15 +38,24 @@ export async function updateSession(request: NextRequest) {
   // issues with users being randomly logged out.
 
   let user = null;
-  let authError = false;
   try {
     const {
       data: { user: authUser },
     } = await supabase.auth.getUser();
     user = authUser;
-  } catch {
-    // Fail open: if getUser throws, treat as unknown auth state
-    authError = true;
+  } catch (err) {
+    // Fail CLOSED (C-2 fix): if Supabase throws an unexpected error we
+    // cannot vouch for the session, so redirect to the auth page with a
+    // dedicated error code instead of leaving the user on a protected page.
+    console.error(
+      "[session] unexpected auth error:",
+      err instanceof Error ? err.message : String(err),
+    );
+    const redirectUrl = request.nextUrl.clone();
+    redirectUrl.pathname = "/auth";
+    redirectUrl.search = "";
+    redirectUrl.searchParams.set("error", "SESSION_ERROR");
+    return NextResponse.redirect(redirectUrl);
   }
 
   const pathname = request.nextUrl.pathname;
@@ -71,8 +80,11 @@ export async function updateSession(request: NextRequest) {
     !pathname.startsWith("/onboarding") &&
     !request.nextUrl.searchParams.has("error")
   ) {
-    // Authenticated users shouldn't see auth pages
-    const role = user.user_metadata?.role;
+    // Authenticated users shouldn't see auth pages. Narrow the untrusted JWT
+    // claim via isRole() instead of trusting user_metadata.role as-is
+    // (H-type regression fix).
+    const rawRole = user.user_metadata?.role;
+    const role = isRole(rawRole) ? rawRole : null;
     if (!role) {
       // Role-less users need onboarding
       const redirectResponse = NextResponse.redirect(
@@ -93,7 +105,7 @@ export async function updateSession(request: NextRequest) {
     return redirectResponse;
   }
 
-  if (!authError && !user && !isAuthPage && !isPublicPath) {
+  if (!user && !isAuthPage && !isPublicPath) {
     // This is a protected route but no user is logged in.
     // We redirect to auth with a returnUrl.
     const url = request.nextUrl.clone();

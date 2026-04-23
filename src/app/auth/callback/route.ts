@@ -2,14 +2,14 @@ import { createServerClient, type CookieOptions } from "@supabase/ssr";
 import { NextRequest, NextResponse } from "next/server";
 import { config } from "@/lib/config";
 import { parseOnboardingRole, syncOnboardingRole } from "@/lib/onboarding";
-import { getPortalForRole, type Role } from "@/lib/rbac";
-import { validateRedirectUrl } from "@/lib/url";
+import { getPortalForRole, isRole, type Role } from "@/lib/rbac";
+import { resolveSafeRedirect } from "@/lib/url";
 
 export async function GET(request: NextRequest): Promise<NextResponse> {
   const { searchParams, origin } = new URL(request.url);
   const providerError = searchParams.get("error");
   if (providerError) {
-    return NextResponse.redirect(`${origin}/auth?error=oauth_denied`);
+    return NextResponse.redirect(`${origin}/auth?error=OAUTH_DENIED`);
   }
 
   const code = searchParams.get("code");
@@ -17,7 +17,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     searchParams.get("onboarding_role"),
   );
   const rawNext = searchParams.get("next") ?? "/";
-  const next = validateRedirectUrl(rawNext) ?? "/";
+  const next = resolveSafeRedirect(rawNext, "/");
 
   if (code) {
     const pendingCookies: Array<{
@@ -45,7 +45,11 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 
     if (!error) {
       let session = data.session;
-      let role = data.user?.user_metadata?.role as Role | undefined;
+      // Narrow the untrusted JWT claim via isRole() at every read site
+      // rather than an unchecked `as Role | undefined` cast
+      // (H-type regression fix).
+      const rawInitialRole = data.user?.user_metadata?.role;
+      let role: Role | null = isRole(rawInitialRole) ? rawInitialRole : null;
 
       if (session) {
         // `exchangeCodeForSession()` persists the session immediately, but the
@@ -56,9 +60,8 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
           await supabase.auth.refreshSession();
         if (!refreshError && refreshData.session) {
           session = refreshData.session;
-          role = refreshData.session.user?.user_metadata?.role as
-            | Role
-            | undefined;
+          const rawRefreshRole = refreshData.session.user?.user_metadata?.role;
+          role = isRole(rawRefreshRole) ? rawRefreshRole : null;
         }
       }
 
@@ -74,14 +77,19 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
               await supabase.auth.refreshSession();
             if (!refreshError) {
               session = refreshData.session ?? session;
-              role = refreshData.session?.user?.user_metadata?.role as
-                | Role
-                | undefined;
+              const rawPostSyncRole =
+                refreshData.session?.user?.user_metadata?.role;
+              role = isRole(rawPostSyncRole) ? rawPostSyncRole : null;
             }
           }
-        } catch {
+        } catch (err) {
           // If onboarding sync is temporarily unavailable, fall back to the
           // role-selection page instead of failing the OAuth callback.
+          // Log the cause so on-call has a trail (H-sf-2 fix).
+          console.error(
+            "[auth/callback] onboarding sync failed:",
+            err instanceof Error ? err.message : String(err),
+          );
         }
       }
 
@@ -102,5 +110,5 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     }
   }
 
-  return NextResponse.redirect(`${origin}/auth?error=oauth_callback_failed`);
+  return NextResponse.redirect(`${origin}/auth?error=OAUTH_FAILED`);
 }

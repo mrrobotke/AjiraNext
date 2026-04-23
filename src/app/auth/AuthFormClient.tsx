@@ -3,7 +3,7 @@
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState, useCallback } from "react";
 import { AuthForm, AuthMode } from "@/design-system/organisms/AuthForm";
-import { mapAuthError } from "@/lib/auth-errors";
+import { AUTH_ERROR_CODES, authErrorMessage } from "@/lib/auth-errors";
 import {
   login,
   signup,
@@ -17,6 +17,8 @@ interface AuthFormClientProps {
   initialError: string | null;
   returnUrl?: string;
 }
+
+const UNKNOWN_MESSAGE = authErrorMessage(AUTH_ERROR_CODES.UNKNOWN);
 
 export function AuthFormClient({
   initialMode,
@@ -69,11 +71,18 @@ export function AuthFormClient({
           onboardingRole,
           returnUrl: returnUrl ?? searchParams.get("returnUrl") ?? undefined,
         });
-        if (result?.error) {
-          setError(mapAuthError(result.error));
+        if (result && "error" in result && result.error) {
+          setError(authErrorMessage(result.error.code));
         }
-      } catch {
-        setError(mapAuthError(""));
+      } catch (err) {
+        // M-sf-1: never swallow silently. Log the cause so on-call has a
+        // trail, then fall back to the discriminated UNKNOWN message so
+        // the user still sees actionable feedback.
+        console.error(
+          "[AuthFormClient] Google sign-in threw:",
+          err instanceof Error ? err.message : String(err),
+        );
+        setError(UNKNOWN_MESSAGE);
       }
       setLoading(false);
     },
@@ -109,23 +118,23 @@ export function AuthFormClient({
       try {
         if (mode === "signin") {
           const result = await login(formData);
-          if (result?.error) {
-            setError(mapAuthError(result.error));
+          if (result && "error" in result && result.error) {
+            setError(authErrorMessage(result.error.code));
             setLoading(false);
           }
         } else if (mode === "signup") {
           const result = await signup(formData);
-          if (result?.error) {
-            setError(mapAuthError(result.error));
+          if (result && "error" in result && result.error) {
+            setError(authErrorMessage(result.error.code));
             setLoading(false);
-          } else if (result?.success) {
+          } else if (result && "success" in result && result.success) {
             setLoading(false);
             setError("Check your email to confirm your account.");
           }
         } else if (mode === "reset") {
           const result = await requestPasswordReset(formData);
-          if (result?.error) {
-            setError(mapAuthError(result.error));
+          if (result && "error" in result && result.error) {
+            setError(authErrorMessage(result.error.code));
             setLoading(false);
           } else {
             setResetSent(true);
@@ -135,8 +144,14 @@ export function AuthFormClient({
           setError("OTP sign-in is coming soon.");
           setLoading(false);
         }
-      } catch {
-        setError(mapAuthError(""));
+      } catch (err) {
+        // M-sf-1: never swallow silently — log the cause then show the
+        // discriminated UNKNOWN message.
+        console.error(
+          "[AuthFormClient] handleSubmit threw:",
+          err instanceof Error ? err.message : String(err),
+        );
+        setError(UNKNOWN_MESSAGE);
         setLoading(false);
       }
     },

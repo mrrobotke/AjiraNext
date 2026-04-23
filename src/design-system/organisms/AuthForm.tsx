@@ -16,6 +16,13 @@ import { TextInput } from "@/design-system/atoms/TextInput";
 export type AuthMode = "signin" | "signup" | "reset" | "otp";
 export type AuthRole = "seeker" | "employer";
 
+/**
+ * Stable DOM id for the form-level error element. Exported so tests (and any
+ * server-rendered aria wiring) can reference the exact same identifier the
+ * inputs' `aria-describedby` points at.
+ */
+export const AUTH_FORM_ERROR_ID = "auth-form-error";
+
 export interface AuthFormProps {
   mode?: AuthMode;
   onModeChange?: (mode: AuthMode) => void;
@@ -306,6 +313,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({
               <TextInput
                 id={fullNameId}
                 required
+                autoComplete="name"
                 placeholder="Amina Okafor"
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
@@ -318,9 +326,12 @@ export const AuthForm: React.FC<AuthFormProps> = ({
               id={emailId}
               type="email"
               required
+              autoComplete="email"
               placeholder="you@example.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              aria-invalid={error ? true : undefined}
+              aria-describedby={error ? AUTH_FORM_ERROR_ID : undefined}
             />
           </FormField>
 
@@ -329,6 +340,8 @@ export const AuthForm: React.FC<AuthFormProps> = ({
               <TextInput
                 id={otpId}
                 required
+                autoComplete="one-time-code"
+                inputMode="numeric"
                 placeholder="123456"
                 maxLength={6}
                 value={otp}
@@ -343,9 +356,12 @@ export const AuthForm: React.FC<AuthFormProps> = ({
                 id={passwordId}
                 type="password"
                 required
+                autoComplete={isSignUp ? "new-password" : "current-password"}
                 placeholder="••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                aria-invalid={error ? true : undefined}
+                aria-describedby={error ? AUTH_FORM_ERROR_ID : undefined}
               />
             </FormField>
           )}
@@ -364,6 +380,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({
 
           {error && (
             <div
+              id={AUTH_FORM_ERROR_ID}
               role="alert"
               aria-live="assertive"
               className="bg-danger/10 text-danger text-sm font-bold p-3 rounded-xl"

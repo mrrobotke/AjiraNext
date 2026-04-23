@@ -1,7 +1,5 @@
 import React from "react";
-import { redirect } from "next/navigation";
-import { getUserRole } from "@/lib/auth";
-import { canAccessPortal } from "@/lib/rbac";
+import { guardPortal } from "@/lib/portal-guard";
 
 export const dynamic = "force-dynamic";
 
@@ -10,15 +8,6 @@ export default async function AdminLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const role = await getUserRole();
-
-  if (!role) {
-    redirect("/auth?mode=signin");
-  }
-
-  if (!canAccessPortal([role], "ADMIN_PORTAL")) {
-    redirect("/auth?error=unauthorized");
-  }
-
+  await guardPortal("ADMIN_PORTAL");
   return <>{children}</>;
 }
