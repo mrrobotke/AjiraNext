@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import { ThemeProvider } from "@/design-system/atoms/ThemeProvider";
+import { ThemeBootstrapScript } from "@/design-system/atoms/ThemeBootstrapScript";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -9,22 +11,12 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Ajira Next",
+  title: {
+    default: "Ajira Next",
+    template: "%s | Ajira Next",
+  },
   description: "The elite career platform for Africa",
 };
-
-const themeScript = `
-  (function () {
-    try {
-      const stored = localStorage.getItem('theme');
-      if (stored === 'light' || stored === 'dark') {
-        document.documentElement.dataset.theme = stored;
-      } else if (window.matchMedia('(prefers-color-scheme: light)').matches) {
-        document.documentElement.dataset.theme = 'light';
-      }
-    } catch (e) {}
-  })();
-`;
 
 export default function RootLayout({
   children,
@@ -35,12 +27,11 @@ export default function RootLayout({
     <html
       lang="en"
       className={`${inter.variable} h-full antialiased`}
-      data-theme="dark"
       suppressHydrationWarning
     >
       <body className="min-h-full flex flex-col font-sans">
-        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
-        {children}
+        <ThemeBootstrapScript />
+        <ThemeProvider>{children}</ThemeProvider>
       </body>
     </html>
   );

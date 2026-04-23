@@ -20,3 +20,5 @@ export { Spinner } from "./Spinner";
 export { TextArea } from "./TextArea";
 export { TextInput } from "./TextInput";
 export { Toggle } from "./Toggle";
+export { ThemeProvider, useTheme } from "./ThemeProvider";
+export { ThemeBootstrapScript } from "./ThemeBootstrapScript";

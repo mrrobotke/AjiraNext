@@ -11,12 +11,14 @@ export interface HeaderProps extends React.HTMLAttributes<HTMLElement> {
   activeLink?: string;
   onThemeToggle?: () => void;
   theme?: "light" | "dark";
+  user?: { email?: string } | null;
+  dashboardHref?: string | null;
 }
 
 const links = [
   { label: "Home", href: "/" },
   { label: "Jobs", href: "/jobs" },
-  { label: "Employers", href: "/for-employers" },
+  { label: "Employers", href: "/employers" },
   { label: "Pricing", href: "/pricing" },
   { label: "About", href: "/about" },
   { label: "Blog", href: "/blog" },
@@ -27,6 +29,8 @@ export const Header: React.FC<HeaderProps> = ({
   activeLink,
   onThemeToggle,
   theme = "dark",
+  user,
+  dashboardHref,
   className,
   ...rest
 }) => {
@@ -35,7 +39,7 @@ export const Header: React.FC<HeaderProps> = ({
       className={cn(
         "sticky top-0 z-30 py-5 px-8",
         "bg-gradient-to-b from-bg to-transparent",
-        className
+        className,
       )}
       {...rest}
     >
@@ -43,7 +47,7 @@ export const Header: React.FC<HeaderProps> = ({
         className={cn(
           "max-w-page mx-auto flex items-center gap-4",
           "bg-card border border-border rounded-full",
-          "px-6 py-2.5 shadow-sm"
+          "px-6 py-2.5 shadow-sm",
         )}
       >
         <Logo />
@@ -68,41 +72,49 @@ export const Header: React.FC<HeaderProps> = ({
               aria-label="Toggle theme"
             />
           )}
-          <a href="/auth?mode=signin">
-            <Button variant="ghost" size="sm">
-              Sign in
+          {user ? (
+            <Button asChild size="sm" variant="secondary">
+              <a href={dashboardHref ?? "/seeker"}>Dashboard</a>
             </Button>
-          </a>
-          <DropdownMenu
-            trigger={<Button size="sm">Get Started ▾</Button>}
-            items={[
-              {
-                icon: "User",
-                label: "Sign up as Job Seeker",
-                description: "Find your next role",
-                href: "/auth?mode=signup&as=seeker",
-              },
-              {
-                icon: "Briefcase",
-                label: "Sign up as Employer",
-                description: "Post jobs & source talent",
-                href: "/auth?mode=signup&as=employer",
-              },
-              { separator: true },
-              {
-                icon: "LayoutDashboard",
-                label: "Enter Seeker Dashboard",
-                description: "Demo mode",
-                href: "/seeker",
-              },
-              {
-                icon: "LayoutDashboard",
-                label: "Enter Employer Dashboard",
-                description: "Demo mode",
-                href: "/employer",
-              },
-            ]}
-          />
+          ) : (
+            <>
+              <a href="/auth?mode=signin">
+                <Button variant="ghost" size="sm">
+                  Sign in
+                </Button>
+              </a>
+              <DropdownMenu
+                trigger={<Button size="sm">Get Started ▾</Button>}
+                items={[
+                  {
+                    icon: "User",
+                    label: "Sign up as Job Seeker",
+                    description: "Find your next role",
+                    href: "/auth?mode=signup&as=seeker",
+                  },
+                  {
+                    icon: "Briefcase",
+                    label: "Sign up as Employer",
+                    description: "Post jobs & source talent",
+                    href: "/auth?mode=signup&as=employer",
+                  },
+                  { separator: true },
+                  {
+                    icon: "LayoutDashboard",
+                    label: "Enter Seeker Dashboard",
+                    description: "Demo mode",
+                    href: "/seeker",
+                  },
+                  {
+                    icon: "LayoutDashboard",
+                    label: "Enter Employer Dashboard",
+                    description: "Demo mode",
+                    href: "/employer",
+                  },
+                ]}
+              />
+            </>
+          )}
         </div>
       </div>
     </nav>
