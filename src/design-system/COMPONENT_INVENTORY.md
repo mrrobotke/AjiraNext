@@ -74,6 +74,12 @@ Decomposition of every UI element found in the mockup using Atomic Design method
 ## Templates (Page-Level Wireframes)
 
 - **MarketingPageTemplate** — Header organism + `<main>` slot + Footer organism
+- **MobileMarketingTemplate** — MobileMarketingHeader organism + MobileNavDrawer organism + `<main>` slot + Footer organism
+
+## Mobile Organisms
+
+- **MobileMarketingHeader** — Hamburger toggle + Logo + auth-aware CTA (sign-in / dashboard)
+- **MobileNavDrawer** — Slide-out navigation drawer with focus trap, Escape close, body scroll lock, and `inert` main content
 - **JobSeekerDashboardTemplate** — DashboardSidebar organism + Header organism + content area
 - **JobListingTemplate** — Header organism + FilterPanel organism + grid of JobCard organisms + Footer organism
 - **AuthForm** — Stateful authentication form organism (mode switching, social login, role picker)

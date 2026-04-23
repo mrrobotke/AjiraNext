@@ -14,3 +14,5 @@ export { StatsRow } from "./StatsRow";
 export { Table } from "./Table";
 export { Tabs } from "./Tabs";
 export { Toast } from "./Toast";
+export { MobileMarketingHeader } from "./MobileMarketingHeader";
+export { MobileNavDrawer } from "./MobileNavDrawer";

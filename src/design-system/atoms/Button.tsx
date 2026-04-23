@@ -36,20 +36,44 @@ export interface ButtonProps
     React.ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof buttonVariants> {
   loading?: boolean;
+  asChild?: boolean;
 }
 
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ variant, size, loading, disabled, children, className, ...rest }, ref) => {
+  (
+    { variant, size, loading, disabled, children, className, asChild, ...rest },
+    ref,
+  ) => {
+    const classes = cn(
+      buttonVariants({ variant, size }),
+      (disabled || loading) && "opacity-50 cursor-not-allowed",
+      "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-bg",
+      className,
+    );
+
+    if (asChild && React.isValidElement(children)) {
+      const childProps = children.props as {
+        className?: string;
+        ref?: React.Ref<unknown>;
+      };
+      return React.cloneElement(
+        children as React.ReactElement<{
+          className?: string;
+          ref?: React.Ref<unknown>;
+        }>,
+        {
+          className: cn(classes, childProps.className),
+          ref,
+          ...rest,
+        } as Record<string, unknown>,
+      );
+    }
+
     return (
       <button
         ref={ref}
         disabled={disabled || loading}
-        className={cn(
-          buttonVariants({ variant, size }),
-          (disabled || loading) && "opacity-50 cursor-not-allowed",
-          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-bg",
-          className,
-        )}
+        className={classes}
         {...rest}
       >
         {loading && <Spinner size="sm" />}
