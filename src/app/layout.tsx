@@ -36,6 +36,7 @@ export default function RootLayout({
       lang="en"
       className={`${inter.variable} h-full antialiased`}
       data-theme="dark"
+      suppressHydrationWarning
     >
       <body className="min-h-full flex flex-col font-sans">
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
