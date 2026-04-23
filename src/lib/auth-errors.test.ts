@@ -1,38 +1,41 @@
 import { describe, it, expect } from "vitest";
-import { mapAuthError } from "./auth-errors";
+import {
+  AUTH_ERROR_CODES,
+  authErrorMessage,
+  type AuthErrorCode,
+} from "./auth-errors";
 
-describe("mapAuthError", () => {
-  it("maps invalid login credentials", () => {
-    expect(mapAuthError("Invalid login credentials")).toBe(
-      "Email or password is incorrect.",
+describe("authErrorMessage", () => {
+  const codes: AuthErrorCode[] = Object.values(AUTH_ERROR_CODES);
+
+  it.each(codes)("returns a non-empty message for code %s", (code) => {
+    const msg = authErrorMessage(code);
+    expect(typeof msg).toBe("string");
+    expect(msg.length).toBeGreaterThan(0);
+  });
+
+  it("returns the INVALID_CREDENTIALS copy verbatim", () => {
+    expect(authErrorMessage(AUTH_ERROR_CODES.INVALID_CREDENTIALS)).toBe(
+      "Incorrect email or password.",
     );
   });
-  it("maps email not confirmed", () => {
-    expect(mapAuthError("Email not confirmed")).toBe(
-      "Please confirm your email before signing in.",
-    );
-  });
-  it("maps user already registered", () => {
-    expect(mapAuthError("User already registered")).toBe(
-      "An account with this email already exists.",
-    );
-  });
-  it("maps rate limit", () => {
-    expect(mapAuthError("Rate limit exceeded")).toBe(
+
+  it("returns the RATE_LIMITED copy verbatim", () => {
+    expect(authErrorMessage(AUTH_ERROR_CODES.RATE_LIMITED)).toBe(
       "Too many attempts. Please wait a moment and try again.",
     );
   });
-  it("maps network errors", () => {
-    expect(mapAuthError("Network request failed")).toBe(
-      "Network error. Please check your connection and try again.",
+
+  it("returns the ONBOARDING_CONFLICT copy verbatim", () => {
+    expect(authErrorMessage(AUTH_ERROR_CODES.ONBOARDING_CONFLICT)).toBe(
+      "Your account already has a role. Redirecting…",
     );
   });
-  it("returns generic message for unknown errors", () => {
-    expect(mapAuthError("something weird")).toBe(
-      "Something went wrong. Please try again.",
+
+  it("falls back to UNKNOWN copy for an unrecognized code", () => {
+    const unknownMsg = authErrorMessage(AUTH_ERROR_CODES.UNKNOWN);
+    expect(authErrorMessage("NOT_A_CODE" as unknown as AuthErrorCode)).toBe(
+      unknownMsg,
     );
-  });
-  it("returns generic message for empty input", () => {
-    expect(mapAuthError("")).toBe("Something went wrong. Please try again.");
   });
 });

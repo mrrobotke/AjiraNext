@@ -32,7 +32,10 @@ export function isRole(value: unknown): value is Role {
 }
 
 export const PORTAL_ACCESS = {
-  JOB_SEEKER_PORTAL: [ROLES.JOB_SEEKER, ROLES.AUTHENTICATED, ROLES.ADMIN_SUPER],
+  // `AUTHENTICATED` is intentionally NOT in any portal allow-list. Users whose
+  // `user_metadata.role` is missing are routed through `/onboarding` instead
+  // (see `guardPortal` and `canAccessOnboarding`).
+  JOB_SEEKER_PORTAL: [ROLES.JOB_SEEKER, ROLES.ADMIN_SUPER],
   EMPLOYER_PORTAL: [
     ROLES.EMPLOYER_OWNER,
     ROLES.EMPLOYER_ADMIN,
@@ -65,7 +68,12 @@ const PORTAL_FOR_ROLE: Record<string, string> = {
   [ROLES.SUPPORT_LEAD]: PORTAL_PATHS.ADMIN,
   [ROLES.MARKETING_MANAGER]: PORTAL_PATHS.ADMIN,
   [ROLES.JOB_SEEKER]: PORTAL_PATHS.JOB_SEEKER,
-  [ROLES.AUTHENTICATED]: PORTAL_PATHS.JOB_SEEKER,
+  // AUTHENTICATED is intentionally NOT in this map. Its domain is
+  // portal-eligible roles only; the AUTHENTICATED sentinel (signed-in but
+  // unassigned) is upstream — callers get `null` from `getUserRole()` and
+  // `getPortalForRole(null)` already returns HOME, which the middleware
+  // then routes to /onboarding. Adding AUTHENTICATED here would contradict
+  // the H-1 invariant that AUTHENTICATED is not in any portal allow-list.
 };
 
 export function getPortalForRole(role: Role | null | undefined): string {
@@ -87,4 +95,15 @@ export function canAccessPortal(
   portal: PortalName,
 ): boolean {
   return hasRole(userRoles, [...PORTAL_ACCESS[portal]]);
+}
+
+/**
+ * Returns true when the given role is allowed to see the `/onboarding` page.
+ * Accepts `null` (no role yet) and `AUTHENTICATED` (signed-in but unassigned);
+ * rejects every real portal role — those users are already onboarded and must
+ * be routed to their portal instead.
+ */
+export function canAccessOnboarding(role: Role | null): boolean {
+  if (role === null) return true;
+  return role === ROLES.AUTHENTICATED;
 }

@@ -1,6 +1,11 @@
 import { Suspense } from "react";
 import { AuthPageTemplate } from "@/design-system/templates/AuthPageTemplate";
 import { AuthSidebar } from "@/design-system/organisms/AuthSidebar";
+import {
+  AUTH_ERROR_CODES,
+  authErrorMessage,
+  type AuthErrorCode,
+} from "@/lib/auth-errors";
 import { AuthFormClient } from "./AuthFormClient";
 
 function parseAuthMode(
@@ -22,12 +27,17 @@ function parseAuthRole(value: string | null): "seeker" | "employer" {
   return "seeker";
 }
 
+/**
+ * Translates a `?error=...` query param into a user-facing message. Accepts
+ * discriminated `AuthErrorCode` values (matched case-insensitively). Unknown
+ * codes return `null` so the page renders without a spurious error banner.
+ */
 function getInitialError(paramError: string | null): string | null {
-  if (paramError === "unauthorized") {
-    return "You don't have permission to access that section.";
-  }
-  if (paramError === "oauth_callback_failed") {
-    return "Sign-in failed. Please try again.";
+  if (!paramError) return null;
+  const normalized = paramError.toUpperCase() as AuthErrorCode;
+  const allCodes = new Set<string>(Object.values(AUTH_ERROR_CODES));
+  if (allCodes.has(normalized)) {
+    return authErrorMessage(normalized);
   }
   return null;
 }

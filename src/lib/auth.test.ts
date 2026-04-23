@@ -7,7 +7,7 @@ vi.mock("./supabase/server", () => ({
 }));
 
 import { createClient } from "./supabase/server";
-import { getUserRole, getUser, isRole } from "./auth";
+import { getUserRole, getUser } from "./auth";
 
 const mockCreateClient = vi.mocked(createClient);
 
@@ -15,21 +15,6 @@ const mockCreateClient = vi.mocked(createClient);
 function mockClient(value: unknown) {
   mockCreateClient.mockResolvedValue(value as never);
 }
-
-describe("isRole", () => {
-  it("returns true for valid roles", () => {
-    expect(isRole(ROLES.JOB_SEEKER)).toBe(true);
-    expect(isRole(ROLES.ADMIN_SUPER)).toBe(true);
-    expect(isRole(ROLES.AUTHENTICATED)).toBe(true);
-  });
-  it("returns false for invalid values", () => {
-    expect(isRole("hacker")).toBe(false);
-    expect(isRole(123)).toBe(false);
-    expect(isRole(null)).toBe(false);
-    expect(isRole(undefined)).toBe(false);
-    expect(isRole("")).toBe(false);
-  });
-});
 
 describe("getUserRole", () => {
   const originalEnv = process.env;
@@ -70,7 +55,7 @@ describe("getUserRole", () => {
     expect(role).toBe(ROLES.EMPLOYER_OWNER);
   });
 
-  it("returns AUTHENTICATED when user has no role in metadata", async () => {
+  it("returns null when user has no recognized role in metadata (forces onboarding)", async () => {
     mockClient({
       auth: {
         getUser: vi.fn().mockResolvedValue({
@@ -81,7 +66,21 @@ describe("getUserRole", () => {
     });
 
     const role = await getUserRole();
-    expect(role).toBe(ROLES.AUTHENTICATED);
+    expect(role).toBeNull();
+  });
+
+  it("returns null when user_metadata.role is an unrecognized string", async () => {
+    mockClient({
+      auth: {
+        getUser: vi.fn().mockResolvedValue({
+          data: { user: { user_metadata: { role: "not_a_real_role" } } },
+          error: null,
+        }),
+      },
+    });
+
+    const role = await getUserRole();
+    expect(role).toBeNull();
   });
 
   it("returns null on unexpected error", async () => {

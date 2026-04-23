@@ -7,45 +7,76 @@ import { Button } from "@/design-system/atoms/Button";
 import { Heading } from "@/design-system/atoms/Heading";
 import { Icon } from "@/design-system/atoms/Icon";
 import { Paragraph } from "@/design-system/atoms/Paragraph";
+import { AUTH_ERROR_CODES, authErrorMessage } from "@/lib/auth-errors";
 import type { OnboardingRole } from "@/lib/onboarding";
+
+type Feedback = { tone: "info" | "danger"; message: string };
 
 export default function OnboardingClient() {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
-  const [error, setError] = useState<string | null>(null);
+  const [feedback, setFeedback] = useState<Feedback | null>(null);
   const [selectedRole, setSelectedRole] = useState<OnboardingRole | null>(null);
 
   function handleRoleSelect(role: OnboardingRole) {
-    setError(null);
+    setFeedback(null);
     setSelectedRole(role);
     startTransition(async () => {
-      const result = await setOnboardingRole(role);
+      try {
+        const result = await setOnboardingRole(role);
 
-      if (
-        result?.error === "sync_failed" ||
-        result?.error === "request_failed"
-      ) {
-        setError(
-          "Something went wrong syncing your account. Please try again.",
+        // Happy path: the server action redirects, so nothing comes back.
+        if (!result) {
+          setSelectedRole(null);
+          return;
+        }
+
+        if ("success" in result && result.success) {
+          setSelectedRole(null);
+          return;
+        }
+
+        if ("error" in result && result.error) {
+          const code = result.error.code;
+          if (code === AUTH_ERROR_CODES.ONBOARDING_CONFLICT) {
+            // Role is already set server-side — surface an info toast and
+            // replace the route with the portal path returned by the action.
+            setFeedback({
+              tone: "info",
+              message: authErrorMessage(code),
+            });
+            if ("redirect" in result && typeof result.redirect === "string") {
+              router.replace(result.redirect);
+            } else {
+              router.refresh();
+            }
+            return;
+          }
+          if (code === AUTH_ERROR_CODES.NOT_AUTHENTICATED) {
+            router.push("/auth?mode=signin");
+            return;
+          }
+          setFeedback({ tone: "danger", message: authErrorMessage(code) });
+        }
+      } catch (err) {
+        // M-sf-2: the server action can throw on network failures that
+        // aren't NEXT_REDIRECT (e.g. fetch abort). Log the cause and
+        // surface a discriminated UNKNOWN so the user still sees a Retry.
+        console.error(
+          "[OnboardingClient] setOnboardingRole threw:",
+          err instanceof Error ? err.message : String(err),
         );
-      } else if (result?.error === "role_already_set") {
-        setError("Your account role is already set. Redirecting...");
-        router.refresh();
-      } else if (result?.error === "not_authenticated") {
-        router.push("/auth?mode=signin");
-      } else if (result?.error) {
-        setError("Failed to set up your account. Please try again.");
-      }
-
-      if (!result?.error) {
-        setSelectedRole(null);
+        setFeedback({
+          tone: "danger",
+          message: authErrorMessage(AUTH_ERROR_CODES.UNKNOWN),
+        });
       }
     });
   }
 
   const retryable =
-    error === "Something went wrong syncing your account. Please try again." ||
-    error === "Failed to set up your account. Please try again.";
+    feedback?.tone === "danger" &&
+    feedback?.message !== authErrorMessage(AUTH_ERROR_CODES.INVALID_ROLE);
 
   return (
     <div className="min-h-screen bg-bg flex items-center justify-center px-4">
@@ -118,10 +149,20 @@ export default function OnboardingClient() {
           {isPending ? "Setting up your account..." : ""}
         </p>
 
-        {error && (
-          <div role="alert" aria-live="assertive" className="mt-6">
-            <div className="rounded-xl border border-danger/20 bg-danger/10 p-4 text-danger text-sm font-bold">
-              {error}
+        {feedback && (
+          <div
+            role={feedback.tone === "info" ? "status" : "alert"}
+            aria-live={feedback.tone === "info" ? "polite" : "assertive"}
+            className="mt-6"
+          >
+            <div
+              className={
+                feedback.tone === "info"
+                  ? "rounded-xl border border-accent/20 bg-accent/10 p-4 text-fg text-sm font-bold"
+                  : "rounded-xl border border-danger/20 bg-danger/10 p-4 text-danger text-sm font-bold"
+              }
+            >
+              {feedback.message}
             </div>
             {retryable && (
               <Button

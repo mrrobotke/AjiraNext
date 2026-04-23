@@ -15,6 +15,9 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Build artifacts produced by Storybook and coverage runs.
+    "storybook-static/**",
+    "coverage/**",
   ]),
   ...storybook.configs["flat/recommended"],
   {

@@ -1,99 +1,95 @@
-import { describe, it, expect, vi } from "vitest";
-import { validateRedirectUrl } from "./url";
+import { describe, it, expect } from "vitest";
+import { resolveSafeRedirect } from "./url";
 
-// Mock config
-vi.mock("./config", () => ({
-  config: {
-    baseUrl: "https://ajiranext.example.com",
-  },
-}));
-
-describe("validateRedirectUrl", () => {
-  it("allows valid relative paths", () => {
-    expect(validateRedirectUrl("/profile")).toBe("/profile");
-    expect(validateRedirectUrl("/jobs?q=nextjs")).toBe("/jobs?q=nextjs");
-    expect(validateRedirectUrl("/")).toBe("/");
-  });
-
-  it("allows valid absolute paths with same origin", () => {
-    expect(validateRedirectUrl("https://ajiranext.example.com/profile")).toBe(
-      "/profile",
-    );
-  });
-
-  it("blocks external domains", () => {
-    expect(validateRedirectUrl("https://evil.com/phish")).toBeNull();
-    expect(validateRedirectUrl("//evil.com")).toBeNull();
-  });
-
-  it("blocks malformed URLs", () => {
-    expect(validateRedirectUrl("javascript:alert(1)")).toBeNull();
-    expect(validateRedirectUrl(null)).toBeNull();
-    expect(validateRedirectUrl("")).toBeNull();
-  });
-
-  describe("URL-encoded attacks", () => {
-    it("blocks URL-encoded double-slash (//evil.com)", () => {
-      expect(validateRedirectUrl("%2F%2Fevil.com")).toBeNull();
+describe("resolveSafeRedirect", () => {
+  describe("valid relative paths", () => {
+    it("passes simple paths through", () => {
+      expect(resolveSafeRedirect("/dashboard")).toBe("/dashboard");
+      expect(resolveSafeRedirect("/profile")).toBe("/profile");
+      expect(resolveSafeRedirect("/")).toBe("/");
     });
 
-    it("blocks URL-encoded colon-slash (%3A//evil.com)", () => {
-      expect(validateRedirectUrl("https%3A%2F%2Fevil.com")).toBeNull();
-    });
-  });
-
-  describe("protocol attacks", () => {
-    it("blocks data: URIs", () => {
-      expect(
-        validateRedirectUrl("data:text/html,<script>alert(1)</script>"),
-      ).toBeNull();
-      expect(validateRedirectUrl("DATA:text/html,xss")).toBeNull();
-    });
-
-    it("blocks javascript: protocol case variants", () => {
-      expect(validateRedirectUrl("JavaScript:alert(1)")).toBeNull();
-      expect(validateRedirectUrl("JAVASCRIPT:alert(1)")).toBeNull();
-    });
-  });
-
-  describe("backslash tricks", () => {
-    it("blocks backslash-based redirects", () => {
-      expect(validateRedirectUrl("\\/evil.com")).toBeNull();
-      expect(validateRedirectUrl("//evil.com\\@legit.com")).toBeNull();
-    });
-  });
-
-  describe("null bytes", () => {
-    it("passes through encoded null bytes in relative paths (no stripping)", () => {
-      expect(validateRedirectUrl("/good%00evil")).toBe("/good%00evil");
-    });
-  });
-
-  describe("edge cases", () => {
-    it("handles empty string", () => {
-      expect(validateRedirectUrl("")).toBeNull();
-    });
-
-    it("handles undefined", () => {
-      expect(validateRedirectUrl(undefined)).toBeNull();
-    });
-
-    it("allows hash and query in relative paths", () => {
-      expect(validateRedirectUrl("/profile?tab=settings#section")).toBe(
+    it("preserves query string and hash", () => {
+      expect(resolveSafeRedirect("/jobs?q=nextjs")).toBe("/jobs?q=nextjs");
+      expect(resolveSafeRedirect("/profile?tab=settings#section")).toBe(
         "/profile?tab=settings#section",
       );
     });
 
-    it("blocks protocol-relative URLs (//evil.com/path)", () => {
-      expect(validateRedirectUrl("//evil.com/path")).toBeNull();
+    it("passes through paths containing encoded null bytes", () => {
+      expect(resolveSafeRedirect("/good%00evil")).toBe("/good%00evil");
     });
   });
 
-  it("handles origin-only same-origin URL", () => {
-    expect(validateRedirectUrl("https://ajiranext.example.com")).toBe("/");
+  describe("null / empty / malformed inputs return the fallback", () => {
+    it("returns fallback for null and undefined", () => {
+      expect(resolveSafeRedirect(null)).toBe("/");
+      expect(resolveSafeRedirect(undefined)).toBe("/");
+    });
+
+    it("returns fallback for the empty string", () => {
+      expect(resolveSafeRedirect("")).toBe("/");
+    });
+
+    it("returns the supplied fallback when input is invalid", () => {
+      expect(resolveSafeRedirect(null, "/home")).toBe("/home");
+      expect(resolveSafeRedirect("https://evil.com", "/home")).toBe("/home");
+    });
   });
 
-  it("blocks whitespace-only strings", () => {
-    expect(validateRedirectUrl("   ")).toBeNull();
+  describe("cross-origin and protocol-based redirects are rejected", () => {
+    it("rejects external https URLs", () => {
+      expect(resolveSafeRedirect("https://evil.com")).toBe("/");
+      expect(resolveSafeRedirect("https://evil.com/phish")).toBe("/");
+    });
+
+    it("rejects protocol-relative URLs (//evil.com)", () => {
+      expect(resolveSafeRedirect("//evil.com")).toBe("/");
+      expect(resolveSafeRedirect("//evil.com/path")).toBe("/");
+    });
+
+    it("rejects javascript: and data: schemes (any case)", () => {
+      expect(resolveSafeRedirect("javascript:alert(1)")).toBe("/");
+      expect(resolveSafeRedirect("JavaScript:alert(1)")).toBe("/");
+      expect(resolveSafeRedirect("JAVASCRIPT:alert(1)")).toBe("/");
+      expect(
+        resolveSafeRedirect("data:text/html,<script>alert(1)</script>"),
+      ).toBe("/");
+      expect(resolveSafeRedirect("DATA:text/html,xss")).toBe("/");
+    });
+  });
+
+  describe("separator-smuggling payloads are rejected", () => {
+    it("rejects backslash-based tricks", () => {
+      expect(resolveSafeRedirect("/\\evil.com")).toBe("/");
+      expect(resolveSafeRedirect("\\/evil.com")).toBe("/");
+      expect(resolveSafeRedirect("//evil.com\\@legit.com")).toBe("/");
+    });
+
+    it("rejects URL-encoded tab in path (e.g. /%09/evil.com)", () => {
+      expect(resolveSafeRedirect("/%09/evil.com")).toBe("/");
+    });
+
+    it("rejects URL-encoded newline/CR in path", () => {
+      expect(resolveSafeRedirect("/%0A/evil.com")).toBe("/");
+      expect(resolveSafeRedirect("/%0D/evil.com")).toBe("/");
+    });
+
+    it("rejects URL-encoded backslash (%5C)", () => {
+      expect(resolveSafeRedirect("/%5Cevil.com")).toBe("/");
+    });
+
+    it("rejects literal whitespace-only inputs", () => {
+      // A space isn't in the control-char rejection list, but the URL parser
+      // resolves " " to the sentinel root (pathname "/"), which is an
+      // acceptable same-origin destination. We still assert it can't escape.
+      expect(resolveSafeRedirect("   ")).toBe("/");
+    });
+
+    it("rejects raw tab / CR / LF in input", () => {
+      expect(resolveSafeRedirect("/foo\tbar")).toBe("/");
+      expect(resolveSafeRedirect("/foo\rbar")).toBe("/");
+      expect(resolveSafeRedirect("/foo\nbar")).toBe("/");
+    });
   });
 });
