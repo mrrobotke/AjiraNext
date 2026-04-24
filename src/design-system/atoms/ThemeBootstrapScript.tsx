@@ -13,5 +13,10 @@ export function ThemeBootstrapScript() {
     })();
   `;
 
-  return <script dangerouslySetInnerHTML={{ __html: script }} />;
+  return (
+    <script
+      // eslint-disable-next-line react/no-danger -- Static inline bootstrap string with zero interpolated user data; must run pre-hydration to prevent theme flash.
+      dangerouslySetInnerHTML={{ __html: script }}
+    />
+  );
 }

@@ -18,7 +18,7 @@ export interface HeaderProps extends React.HTMLAttributes<HTMLElement> {
 const links = [
   { label: "Home", href: "/" },
   { label: "Jobs", href: "/jobs" },
-  { label: "Employers", href: "/employers" },
+  { label: "Employers", href: "/for-employers" },
   { label: "Pricing", href: "/pricing" },
   { label: "About", href: "/about" },
   { label: "Blog", href: "/blog" },
