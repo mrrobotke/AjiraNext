@@ -1,12 +1,12 @@
 import type { MetadataRoute } from "next";
 
-function getBaseUrl(): string {
-  return (process.env.NEXT_PUBLIC_BASE_URL ?? "http://localhost:3000").replace(
-    /\/$/,
-    "",
-  );
-}
+import { requireSiteUrl } from "@/lib/seo";
 
+/**
+ * AI crawlers are denied site-wide until there is an explicit product
+ * decision to expose content for training. Listed here (rather than pulled
+ * from a constant) for easy editorial review during content audits.
+ */
 const AI_BOTS = [
   "GPTBot",
   "ClaudeBot",
@@ -18,7 +18,7 @@ const AI_BOTS = [
 
 export default function robots(): MetadataRoute.Robots {
   const isProduction = process.env.VERCEL_ENV === "production";
-  const baseUrl = getBaseUrl();
+  const baseUrl = requireSiteUrl();
 
   if (!isProduction) {
     return {

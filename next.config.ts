@@ -40,6 +40,24 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  async redirects() {
+    return [
+      // Epic 0 PR-1: the canonical employers surface is now /for-employers.
+      // Keep a permanent redirect so any outbound links to /employers
+      // continue to resolve (and sitemap.xml can only advertise the
+      // canonical URL).
+      {
+        source: "/employers",
+        destination: "/for-employers",
+        permanent: true,
+      },
+      {
+        source: "/employers/:path*",
+        destination: "/for-employers/:path*",
+        permanent: true,
+      },
+    ];
+  },
 };
 
 export default nextConfig;

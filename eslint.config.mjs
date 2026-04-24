@@ -25,7 +25,15 @@ const eslintConfig = defineConfig([
     rules: {
       "storybook/no-renderer-packages": "off",
     },
-  }
+  },
+  {
+    // Defense in depth: flag any `dangerouslySetInnerHTML` so intentional uses
+    // (e.g. JSON-LD payloads in `src/lib/seo.tsx`) must opt in with an explicit
+    // `eslint-disable-next-line react/no-danger` + security justification.
+    rules: {
+      "react/no-danger": "error",
+    },
+  },
 ]);
 
 export default eslintConfig;

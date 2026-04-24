@@ -1,9 +1,18 @@
-import { describe, it, expect, beforeEach } from "vitest";
+import { describe, it, expect, beforeEach, afterEach } from "vitest";
+
 import robots from "./robots";
 
 describe("robots", () => {
+  const originalSiteUrl = process.env.NEXT_PUBLIC_SITE_URL;
+  const originalVercelEnv = process.env.VERCEL_ENV;
+
   beforeEach(() => {
-    process.env.NEXT_PUBLIC_BASE_URL = "https://ajira.next";
+    process.env.NEXT_PUBLIC_SITE_URL = "https://ajira.next";
+  });
+
+  afterEach(() => {
+    process.env.NEXT_PUBLIC_SITE_URL = originalSiteUrl;
+    process.env.VERCEL_ENV = originalVercelEnv;
   });
 
   it("disallows everything in non-production", () => {
@@ -49,7 +58,14 @@ describe("robots", () => {
     }
   });
 
-  it("includes sitemap URL", () => {
+  it("includes sitemap URL derived from NEXT_PUBLIC_SITE_URL", () => {
+    process.env.VERCEL_ENV = "production";
+    const result = robots();
+    expect(result.sitemap).toBe("https://ajira.next/sitemap.xml");
+  });
+
+  it("strips trailing slash from NEXT_PUBLIC_SITE_URL", () => {
+    process.env.NEXT_PUBLIC_SITE_URL = "https://ajira.next/";
     process.env.VERCEL_ENV = "production";
     const result = robots();
     expect(result.sitemap).toBe("https://ajira.next/sitemap.xml");

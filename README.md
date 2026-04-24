@@ -28,7 +28,7 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 | Variable                        | Required | Description                                               |
 | ------------------------------- | -------- | --------------------------------------------------------- |
-| `NEXT_PUBLIC_BASE_URL`          | Yes      | Public base URL of the app (e.g. `http://localhost:3000`) |
+| `NEXT_PUBLIC_SITE_URL`          | Yes      | Public base URL of the app (e.g. `http://localhost:3000`) |
 | `NEXT_PUBLIC_API_BASE_URL`      | Yes      | Public API base URL (e.g. `http://localhost:8085/v1`)     |
 | `NEXT_PUBLIC_SUPABASE_URL`      | Yes      | Supabase project URL                                      |
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Yes      | Supabase anonymous key                                    |

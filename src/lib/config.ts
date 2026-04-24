@@ -1,7 +1,7 @@
 // src/lib/config.ts
 export const config = {
   baseUrl: (
-    process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"
+    process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"
   ).replace(/\/$/, ""),
   siteName: process.env.NEXT_PUBLIC_SITE_NAME ?? "AjiraNext",
   apiUrl: (
